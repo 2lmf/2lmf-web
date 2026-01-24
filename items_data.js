@@ -48,29 +48,31 @@ const prices = {
     // --- PANEL OGRADE ---
     fence: {
         // --- 2D PANELI (6/5/6 mm) ---
-        panel_2d_83: 26.50, // Extrapolated
-        panel_2d_103: 32.50,
-        panel_2d_123: 38.80,
-        panel_2d_143: 44.50, // 2D often uses 143 instead of 153, fitting to standard logic
-        panel_2d_163: 51.00,
-        panel_2d_183: 58.00,
-        panel_2d_203: 65.00,
+        panel_2d_83: 28.15,
+        panel_2d_103: 30.91,
+        panel_2d_123: 35.97,
+        panel_2d_143: 41.31,
+        panel_2d_163: 46.64,
+        panel_2d_183: 51.98,
+        panel_2d_203: 58.97,
 
         // --- 3D PANELI (5 mm) ---
-        panel_3d_5_83: 19.50, // Extrapolated
-        panel_3d_5_103: 24.50,
-        panel_3d_5_123: 29.00,
-        panel_3d_5_153: 35.50,
-        panel_3d_5_173: 41.00,
-        panel_3d_5_203: 48.00,
+        panel_3d_5_63: 16.28,
+        panel_3d_5_83: 17.76,
+        panel_3d_5_103: 21.44,
+        panel_3d_5_123: 25.58,
+        panel_3d_5_153: 30.27,
+        panel_3d_5_173: 35.70,
+        panel_3d_5_203: 41.22,
 
         // --- 3D PANELI (4 mm) ---
-        panel_3d_4_83: 15.50, // Extrapolated
-        panel_3d_4_103: 18.50,
-        panel_3d_4_123: 21.80,
-        panel_3d_4_153: 26.50,
-        panel_3d_4_173: 31.20,
-        panel_3d_4_203: 36.40,
+        panel_3d_4_63: 10.50, // Extrapolated & Discounted
+        panel_3d_4_83: 11.50,
+        panel_3d_4_103: 13.34,
+        panel_3d_4_123: 15.64,
+        panel_3d_4_153: 19.41,
+        panel_3d_4_173: 23.00,
+        panel_3d_4_203: 30.36,
 
         // Stupovi (s pločicom ili za betoniranje - usrednjeno)
         post_85: 9.00,
