@@ -18,10 +18,10 @@
 
     <meta name="description"
         content="Vaš partner za hidro i termo izolaciju u Zagrebu. Nudimo najpovoljnije cijene za TPO folije, kamenu vunu, HPL ploče i projektiranje fasada.">
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="icon" href="favicon.png" type="image/x-icon">
 
     <!-- Calculator Styles & Fonts -->
-    <link rel="stylesheet" href="kalkulator.css?v=2">
+    <link rel="stylesheet" href="kalkulator.css?v=99">
     <!-- Google Fonts: Chakra Petch (Tech), Barlow (UI), Stardos Stencil (Fallback for 'Stencil') -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,7 +49,8 @@
                 <div class="dropdown-content">
                     <a href="hidroizolacija.html">Hidroizolacija</a>
                     <a href="termoizolacija.html">Termoizolacija</a>
-                    <a href="ostalo.html">Fasade i ostalo</a>
+                    <a href="fasade.html">Fasade</a>
+                    <a href="ograde.html">Ograde</a>
                 </div>
             </div>
             <a href="arhitektura.html">Arhitektura</a>
@@ -72,25 +73,16 @@
     <main class="container app-wrapper">
         <!-- Navigation Tabs -->
         <nav class="module-nav">
-            <div class="button-tape-container">
-                <button class="nav-btn disabled-tape" data-module="hydro">
-                    <span class="icon">💧</span> Hidroizolacija
-                </button>
-                <div class="wip-tape">RADOVI U TIJEKU</div>
-            </div>
-            <div class="button-tape-container">
-                <button class="nav-btn disabled-tape" data-module="thermal">
-                    <span class="icon">🌡️</span> Termoizolacija
-                </button>
-                <div class="wip-tape">RADOVI U TIJEKU</div>
-            </div>
-            <div class="button-tape-container">
-                <button class="nav-btn disabled-tape" data-module="facade">
-                    <span class="icon">🧱</span> Fasada
-                </button>
-                <div class="wip-tape">RADOVI U TIJEKU</div>
-            </div>
-            <button class="nav-btn" data-module="fence">
+            <button class="nav-btn disabled" data-module="hydro">
+                <span class="icon">💧</span> Hidroizolacija
+            </button>
+            <button class="nav-btn disabled" data-module="thermal">
+                <span class="icon">🌡️</span> Termoizolacija
+            </button>
+            <button class="nav-btn disabled" data-module="facade">
+                <span class="icon">🧱</span> Fasada
+            </button>
+            <button class="nav-btn active" data-module="fence">
                 <span class="icon">🏡</span> Panel Ograda
             </button>
         </nav>
@@ -108,6 +100,8 @@
             <div class="results-header">
                 <h2>Rezultat Izračuna</h2>
                 <div class="results-actions-container">
+                    <!-- Customer Contact Inputs -->
+                    <!-- Customer Contact Inputs Removed (Duplicates) -->
                     <div class="buttons-row">
                         <button id="pdf-btn" class="action-btn">📄 <span class="btn-text">Spremi PDF</span></button>
                         <button id="email-btn-send" class="action-btn">📧 <span class="btn-text">Pošalji</span></button>
@@ -123,6 +117,19 @@
         </section>
         <!-- Copyright Line on Tech Background -->
 
+        <!-- Hashtags with Separator -->
+        <div class="container" style="max-width: 1000px; margin: 0 auto; padding: 0 1.5rem;">
+            <hr style="border: 0; border-top: 1px solid rgba(0, 0, 0, 0.1); margin: 30px 0 15px 0;">
+            <p class="hashtags"
+                style="font-family: 'Segoe UI', sans-serif; text-align: center; color: #7f8c8d; font-size: 0.75rem; font-style: italic; line-height: 1.4;">
+                #ventiliranefasade #fasada #hpl #vlaknocement #aluminij #podkonstrukcija #termo #termoizolacija
+                #najpovoljnije #vrhunskakvaliteta #najpovoljnijacijena #top #hidro #hidroizolacija #XPS #stirodur #TPO
+                #PVC #bitumen #bitumenskaljepenka #ljepenka #arhitektura #kalkulator #kalkulatorograda #kalkulatorfasada
+                #građevinskikalkulator #projektiranje #poliuretanPU #aluminijskaizolacija #zvučnaizolacija #osb #EPS
+                #stiropor #bentonit #polimercement #vuna #kamenavuna
+            </p>
+            <br>
+        </div>
     </main>
 
     <footer class="main-footer" id="kontakt">
@@ -181,12 +188,12 @@
     <div class="footer-bottom-bar"
         style="background-color: #E67E22; color: #000; padding: 2rem 0; text-align: center; font-weight: 700; font-family: 'Barlow', sans-serif; font-size: 0.95rem; margin-top: 0; display: flex; align-items: center; justify-content: center;">
         <div class="container">
-            © 2026 2LMF PRO j.d.o.o. | Vaš partner za hidro i termo izolaciju i ventilirane fasade (v17)
+            © 2026 2LMF PRO j.d.o.o. | Vaš partner za hidro i termo izolaciju i ventilirane fasade
         </div>
     </div>
 
-    <script src="items_data.js?v=17"></script>
-    <script src="kalkulator.js?v=17"></script>
+    <script src="items_data.js?v=11"></script>
+    <script src="kalkulator.js?v=11"></script>
 </body>
 
 </html>

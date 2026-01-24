@@ -73,30 +73,38 @@ const prices = {
         panel_3d_4_203: 36.40,
 
         // Stupovi (s pločicom ili za betoniranje - usrednjeno)
-        // Stupovi (s pločicom ili za betoniranje - usrednjeno)
-        post_85: 9.50,
-        post_105: 11.50,
-        post_125: 12.00,
-        post_135: 12.00, // Fallback
-        post_145: 14.40, // Fallback for 1550 equivalent
-        post_155: 14.40,
-        post_165: 16.30, // Fallback for 1750 equiv
-        post_175: 16.30,
-        post_185: 19.10, // Fallback
-        post_195: 19.10,
-        post_205: 19.10,
-        post_215: 19.10,
-        post_225: 19.10,
-        post_235: 19.10,
-        post_245: 19.10,
-        post_255: 19.10,
-        post_265: 19.10,
+        post_85: 9.00,
+        post_105: 11.00,
+        post_125: 13.50,
+        post_135: 14.50, // Potential concrete for 85
+        post_145: 15.00,
+        post_155: 16.00,
+        post_165: 17.50,
+        post_175: 19.50,
+        post_185: 21.00,
+        post_195: 22.00,
+        post_205: 23.00,
+        post_215: 24.50,
+        post_225: 26.00,
+        post_235: 27.50,
+        post_245: 29.00,
+        post_255: 31.00,
+        post_265: 33.00,
 
         // Pribor
-        set_spojnica: 1.50, // Vijak + Spojnica
-        anker_vijci: 0.80,   // Po komadu
+        set_spojnica: 0.55, // Spojnica + samourezni vijak
+        anker_vijci: 0.55,   // Po komadu
         montaza_plate: 25.00, // Cijena po metru (s pločicom)
-        montaza_concrete: 40.00 // Cijena po metru (betoniranje)
+        montaza_concrete: 40.00, // Cijena po metru (betoniranje)
+
+        // Pješačka vrata (Dimenzija -> [Pločica, Beton])
+        gate_prices: {
+            '1000x1000': { plate: 250, concrete: 300 },
+            '1000x1200': { plate: 270, concrete: 350 },
+            '1000x1500': { plate: 310, concrete: 420 },
+            '1000x1700': { plate: 360, concrete: 450 },
+            '1000x2000': { plate: 400, concrete: 520 }
+        }
     },
 
     chemicals: {
