@@ -1341,4 +1341,5 @@ if (emailBtnSend) {
 }
 
 // Load default
-loadModule('hydro');
+// Load default
+loadModule('fence');
