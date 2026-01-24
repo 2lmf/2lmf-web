@@ -6,7 +6,7 @@ const resultsSection = document.getElementById('results-section');
 const resultsContainer = document.getElementById('results-container');
 
 // State
-let currentModule = 'hydro';
+let currentModule = 'fence';
 
 // Module HTML Layouts (later we can move these to separate files if needed)
 const templates = {

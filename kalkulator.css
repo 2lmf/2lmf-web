@@ -316,6 +316,33 @@ nav a:hover {
     transform: scaleY(1);
 }
 
+/* Disabled "Work in Progress" Style */
+.nav-btn.disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+    background: repeating-linear-gradient(45deg,
+            #ffffff,
+            #ffffff 10px,
+            #ffcccc 10px,
+            #ffcccc 20px);
+    /* Red/White tape effect */
+    border-color: #ff9999;
+    color: #999;
+    pointer-events: none;
+    /* Prevent clicks */
+}
+
+.nav-btn.disabled:hover {
+    box-shadow: none;
+    transform: none;
+    background: repeating-linear-gradient(45deg,
+            #ffffff,
+            #ffffff 10px,
+            #ffcccc 10px,
+            #ffcccc 20px);
+    /* Keep striped on hover */
+}
+
 /* --- Cards & Panels --- */
 .calculator-card,
 .results-card {
