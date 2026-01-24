@@ -67,11 +67,11 @@ const templates = {
                     <input type="text" id="user-name" name="userName" placeholder="Vaše ime">
                 </div>
                 <div class="form-group">
-                    <label for="user-email">Email</label>
+                    <label for="user-email">Email *</label>
                     <input type="email" id="user-email" name="userEmail" placeholder="Vaš email">
                 </div>
                 <div class="form-group">
-                    <label for="user-phone">Kontakt broj</label>
+                    <label for="user-phone">Kontakt broj *</label>
                     <input type="tel" id="user-phone" name="userPhone" placeholder="Br. telefona">
                 </div>
                 <div class="form-group">
