@@ -6,7 +6,7 @@ const resultsSection = document.getElementById('results-section');
 const resultsContainer = document.getElementById('results-container');
 
 // State
-let currentModule = 'fence';
+let currentModule = 'hydro';
 
 // Module HTML Layouts (later we can move these to separate files if needed)
 const templates = {
@@ -308,49 +308,28 @@ const templates = {
 
             <!-- Gate Size Selection -->
             <div id="gate-options" class="hidden" style="margin-top: 1rem;">
-                <div class="form-group">
-                    <label>Odaberite dimenzije (Š x V, mm)</label>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.5rem;">
-                        <div class="layout-btn gate-size-btn" onclick="selectGateSize('1000x1000', this)">
-                           <div class="layout-btn-text" style="font-size: 0.9rem; padding: 0.5rem;">1000x1000</div>
-                        </div>
-                        <div class="layout-btn gate-size-btn" onclick="selectGateSize('1000x1200', this)">
-                           <div class="layout-btn-text" style="font-size: 0.9rem; padding: 0.5rem;">1000x1200</div>
-                        </div>
-                        <div class="layout-btn gate-size-btn" onclick="selectGateSize('1000x1500', this)">
-                           <div class="layout-btn-text" style="font-size: 0.9rem; padding: 0.5rem;">1000x1500</div>
-                        </div>
-                        <div class="layout-btn gate-size-btn" onclick="selectGateSize('1000x1700', this)">
-                           <div class="layout-btn-text" style="font-size: 0.9rem; padding: 0.5rem;">1000x1700</div>
-                        </div>
-                        <div class="layout-btn gate-size-btn" onclick="selectGateSize('1000x2000', this)">
-                           <div class="layout-btn-text" style="font-size: 0.9rem; padding: 0.5rem;">1000x2000</div>
-                        </div>
+                <label style="display:block; margin-bottom:0.5rem; font-weight:700;">Odaberite dimenzije (Š x V, mm)</label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.5rem;">
+                    <div class="layout-btn gate-size-btn" onclick="selectGateSize('1000x1000', this)">
+                       <div class="layout-btn-text" style="font-size: 0.9rem; padding: 0.5rem;">1000x1000</div>
                     </div>
-                    <input type="hidden" id="gate-dimension" name="gateDimension" value="">
-                </div>
-
-                <!-- Gate Post Type Selection -->
-                <div class="form-group" style="margin-top: 1.5rem;">
-                    <label>Vrsta stupova za vrata</label>
-                    <div style="display: flex; gap: 1rem;">
-                        <input type="hidden" id="gate-post-type" name="gatePostType" value="plate">
-                        <div class="layout-btn active" id="gate-post-plate" onclick="selectGatePost('plate')">
-                            <div class="layout-btn-text">Stupovi sa pločicom</div>
-                        </div>
-                        <div class="layout-btn" id="gate-post-concrete" onclick="selectGatePost('concrete')">
-                            <div class="layout-btn-text">Stupovi za betoniranje</div>
-                        </div>
+                    <div class="layout-btn gate-size-btn" onclick="selectGateSize('1000x1200', this)">
+                       <div class="layout-btn-text" style="font-size: 0.9rem; padding: 0.5rem;">1000x1200</div>
+                    </div>
+                    <div class="layout-btn gate-size-btn" onclick="selectGateSize('1000x1500', this)">
+                       <div class="layout-btn-text" style="font-size: 0.9rem; padding: 0.5rem;">1000x1500</div>
+                    </div>
+                    <div class="layout-btn gate-size-btn" onclick="selectGateSize('1000x1700', this)">
+                       <div class="layout-btn-text" style="font-size: 0.9rem; padding: 0.5rem;">1000x1700</div>
+                    </div>
+                    <div class="layout-btn gate-size-btn" onclick="selectGateSize('1000x2000', this)">
+                       <div class="layout-btn-text" style="font-size: 0.9rem; padding: 0.5rem;">1000x2000</div>
                     </div>
                 </div>
-
-                <p style="font-size: 0.9rem; color: black; font-weight: 700; margin-top: 1.5rem; margin-bottom: 2rem;">
-                    * Napomena: stupovi na pločici ili bez sa pantima, sidro vijci, brava, kvaka i ključ su u cijeni.
+                <input type="hidden" id="gate-dimension" name="gateDimension" value="">
+                <p style="font-size: 0.85rem; color: #666; margin-top: 0.8rem; font-style: italic;">
+                    * Napomena: stupovi na pločici sa pantima, sidro vijci, brava, kvaka i ključ su u cijeni.
                 </p>
-
-            </div>
-
-            <!-- Installation Option -->
             </div>
 
             <!-- Installation Option -->
@@ -505,22 +484,6 @@ window.selectGateSize = function (size, btn) {
     // UI
     document.querySelectorAll('.gate-size-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-}
-
-window.selectGatePost = function (val) {
-    const btnPlate = document.getElementById('gate-post-plate');
-    const btnConcrete = document.getElementById('gate-post-concrete');
-    const input = document.getElementById('gate-post-type');
-
-    input.value = val;
-
-    if (val === 'plate') {
-        btnPlate.classList.add('active');
-        btnConcrete.classList.remove('active');
-    } else {
-        btnConcrete.classList.add('active');
-        btnPlate.classList.remove('active');
-    }
 }
 
 window.toggleFenceOptions = function () {
@@ -740,6 +703,8 @@ function calculateHydro(data) {
         items.push({ name: 'Geotekstil (razdjelni sloj)', value: (area * 1.1).toFixed(2), unit: 'm²', price: prices.membranes.geotextile });
 
         // 2. XPS (Thermal)
+        // 2. XPS (Thermal)
+        // 2. XPS (Thermal)
         items.push({ name: `XPS ploče (Ravatherm XPS 300) (${thickness}cm)`, value: (area * 1.05).toFixed(2), unit: 'm²', price: xpsPrice });
 
         // 3. Geotekstil (iznad XPS-a, ispod folije)
@@ -796,7 +761,6 @@ function calculateFence(data) {
     const installation = data.fenceInstallation === 'yes';
     const gateNeeded = data.fenceGate === 'yes';
     const gateDim = data.gateDimension;
-    const gatePostType = data.gatePostType; // 'plate' or 'concrete'
 
     let items = [];
 
@@ -829,42 +793,10 @@ function calculateFence(data) {
         price: panelPrice
     });
 
-    // 2. Posts & 3. Clamps Logic
-    // Logic based on Panel Height (cm)
-    // Table Data:
-    // Panel | Clamps | Plate Post | Concrete Post
-    // 83    | 2      | 85         | 155
-    // 103   | 2      | 105        | 155
-    // 123   | 3      | 125        | 175
-    // 143(2D)| 3     | 155        | 205 (Interpolated/From 2D table)
-    // 153   | 3      | 155        | 205
-    // 163(2D)| 4     | 175        | 225
-    // 173   | 4      | 175        | 225
-    // 183(2D)| 4     | 205        | 250
-    // 203   | 4      | 205        | 250/255 (Using 250 for consistency or 255 for 3D? User table for 3D says 255, 2D says 250. Let's strict map.)
-
-    let specs = { plate: height, concrete: height + 50, clamps: 2 }; // Default fallback
-
-    if (panelType === '2d') {
-        if (height <= 103) specs = { plate: height + 2, concrete: 155, clamps: 2 };
-        else if (height <= 123) specs = { plate: 125, concrete: 175, clamps: 3 };
-        else if (height <= 143) specs = { plate: 155, concrete: 205, clamps: 3 };
-        else if (height <= 163) specs = { plate: 175, concrete: 225, clamps: 4 };
-        else if (height <= 183) specs = { plate: 205, concrete: 250, clamps: 4 };
-        else specs = { plate: 205, concrete: 250, clamps: 4 }; // 203+
-    } else {
-        // 3D
-        if (height <= 83) specs = { plate: 85, concrete: 155, clamps: 2 };
-        else if (height <= 103) specs = { plate: 105, concrete: 155, clamps: 2 };
-        else if (height <= 123) specs = { plate: 125, concrete: 175, clamps: 3 };
-        else if (height <= 153) specs = { plate: 155, concrete: 205, clamps: 3 };
-        else if (height <= 173) specs = { plate: 175, concrete: 225, clamps: 4 };
-        else specs = { plate: 205, concrete: 255, clamps: 4 }; // 203+
-    }
-
-    // Number of posts = Number of Panels + 1 + Corners (extra post per corner)
-    const numPosts = numPanels + 1 + corners;
-    const postHeight = postType === 'concrete' ? specs.concrete : specs.plate;
+    // 2. Posts
+    // Number of posts = Number of Panels + 1
+    const numPosts = numPanels + 1;
+    const postHeight = postType === 'concrete' ? height + 50 : height; // If concrete, needs to be longer
 
     items.push({
         name: `Stup 60x60mm (v${postHeight}cm) ${postType === 'plate' ? 's pločicom' : 'za beton.'}`,
@@ -874,96 +806,105 @@ function calculateFence(data) {
     });
 
     // 3. Mounting Sets (Spojnice)
-    const totalClamps = numPosts * specs.clamps;
+    // Usually 2 or 3 per post based on height
+    let clampsPerPost = 2;
+    if (height > 123) clampsPerPost = 3;
+    if (height > 173) clampsPerPost = 4;
+
+    const totalClamps = numPosts * clampsPerPost;
     items.push({
-        name: 'Spojnice (kompleti)<br><small class="text-muted d-block" style="font-weight: normal; font-size: 0.85em;">(spojnica + samourezni vijak)</small>',
+        name: 'Spojnice (kompleti)',
         value: totalClamps,
         unit: 'kom',
-        price: prices.fence.set_spojnica
+        price: 1.5
     });
 
     // 4. Anchors (if plate)
     if (postType === 'plate') {
         items.push({
-            name: 'Sidreni vijci, M10 (4 po stupu)',
+            name: 'Sidreni vijci (4 po stupu)',
             value: numPosts * 4,
             unit: 'kom',
-            price: prices.fence.anker_vijci
+            price: 0.5
         });
+        unit: 'kom',
+            price: 0.5
+    });
+}
+
+// 5. Gate (Pješačka vrata)
+if (gateNeeded && gateDim) {
+    // Placeholder prices logic
+    let gatePrice = 250;
+    if (gateDim === '1000x1200') gatePrice = 270;
+    if (gateDim === '1000x1500') gatePrice = 300;
+    if (gateDim === '1000x1700') gatePrice = 330;
+    if (gateDim === '1000x2000') gatePrice = 360;
+
+    items.push({
+        name: `Pješačka vrata jednokrilna ${gateDim}mm (Komplet)`,
+        value: 1,
+        unit: 'kpl',
+        price: gatePrice
+    });
+}
+
+// 6. Corners (Additional posts/material logic could go here)
+if (corners > 0) {
+    // Maybe added cost for corner clamps or specific solution
+    items.push({
+        name: 'Kutni setovi (dodatno)',
+        value: corners,
+        unit: 'kom',
+        price: 5
+    });
+}
+
+// 6. Installation
+if (installation) {
+    let installPrice = 16; // Base price per m
+    // simple logic: higher fence = more expensive?
+    if (height > 153) installPrice = 18;
+    if (postType === 'concrete') installPrice += 5; // Concrete work is harder
+
+    let installName = 'Montaža ograde (ključ u ruke)';
+    if (postType === 'concrete') {
+        installName += '<br><small class="text-muted d-block" style="font-weight: normal; font-size: 0.85em;">(iskop i beton uključen u cijenu montaže)</small>';
     }
 
-    // 5. Gate (Pješačka vrata)
-    if (gateNeeded && gateDim) {
-        // Price logic from matrix
-        let gatePrice = 0;
-        const pricesObj = prices.fence.gate_prices[gateDim];
-        if (pricesObj) {
-            gatePrice = gatePostType === 'concrete' ? pricesObj.concrete : pricesObj.plate;
-        }
+    // Gate installation extra? Probably. Let's add a fixed amount for gate install if selected.
+    let totalInstallPrice = length * installPrice;
+    if (gateNeeded) {
+        const gateInstallPrice = 60; // Fixed price for gate install
+        totalInstallPrice += gateInstallPrice;
+        installName += ` + Montaža vrata`;
+    }
 
-        // Expanded name for PDF visualization with note
-        // "izbaci komplet, a umjesto toga napiši napomenu"
-        const gateName = `Pješačka vrata ${gateDim}mm<br><small class="text-muted d-block" style="font-weight: normal; font-size: 0.85em;">(sidro vijci, brava, kvaka i ključ uključeni)</small>`;
+    items.push({
+        name: installName,
+        value: 1, // Changed to 1 paušal or keep length but adjust unit price?
+        // To keep logic simple: Value is Length, but if gate is added, the math gets tricky if we just multiply.
+        // Better: "Montaža ograde" line + "Montaža vrata" line?
+        // User requested: "Below gate buttons note: ... included in price". This refers to the gate KIT price.
+        // For installation, I will assume it's linear.
+        // Let's stick to linear for fence, and maybe add specific line for gate install if robust.
+        // For now, I'll just keep the linear calculation for fence and add separate item for gate install to be clear.
+        value: length.toFixed(2),
+        unit: 'm',
+        price: installPrice
+    });
 
+    if (gateNeeded) {
         items.push({
-            name: gateName,
+            name: 'Montaža pješačkih vrata',
             value: 1,
-            unit: 'kpl',
-            price: gatePrice
+            unit: 'kom',
+            price: 60 // Placeholder
         });
     }
+}
 
-    // 6. Corners (Logic handled in Post count)
-    // Removed "Kutni setovi" item as requested.
-
-    // 6. Installation
-    if (installation) {
-        let installPrice = 16; // Fallback
-
-        // "ako je stup na pločici - montaža je 25 eur/m (izbaci napomenu iskop)"
-        // "ako su stupovi za betoniranje - montaža je 40 eur/m (ostavi napomenu)"
-
-        let installName = 'Montaža ograde (ključ u ruke)';
-
-        if (postType === 'plate') {
-            installPrice = prices.fence.montaza_plate || 25;
-            // No note for plate
-        } else {
-            installPrice = prices.fence.montaza_concrete || 40;
-            installName += '<br><small class="text-muted d-block" style="font-weight: normal; font-size: 0.85em;">(iskop i beton uključen u cijenu montaže)</small>';
-        }
-
-        // Add general disclaimer note for installation (Request: user wants it on web and PDF)
-        // Add general disclaimer note for installation (Request: user wants it on web and PDF)
-        installName += '<br><span style="display: block; color: #000; font-size: 11px; margin-top: 2px;">* Iznos montaže je informativnog karaktera i vrijedi za Zagreb i okolicu do 20km.</span>';
-
-        // Gate installation extra? Probably. Let's add a fixed amount for gate install if selected.
-        let totalInstallPrice = length * installPrice;
-        if (gateNeeded) {
-            const gateInstallPrice = 120; // Updated fixed price
-            totalInstallPrice += gateInstallPrice;
-            // Remove "+ Montaža vrata" string as requested
-            // "kod stavke 'Montaža ograde (ključ u ruke) izbaci '+ Montaža vrata'"
-        }
-
-        items.push({
-            name: installName,
-            value: length.toFixed(2),
-            unit: 'm',
-            price: installPrice
-        });
-
-        if (gateNeeded) {
-            items.push({
-                name: 'Montaža pješačkih vrata',
-                value: 1,
-                unit: 'kom',
-                price: 120
-            });
-        }
-    }
-
-    return items;
+return items;
 }
 
 function displayResults(items) {
@@ -1008,7 +949,7 @@ function displayResults(items) {
 
     // Grand Total Row
     const totalDiv = document.createElement('div');
-    totalDiv.className = 'result-total-row'; // Unique class to prevent email loop iteration
+    totalDiv.className = 'result-item grand-total';
     const fmtGrandTotal = grandTotal.toLocaleString('hr-HR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     // Conditional Styling for Fence Module
@@ -1139,9 +1080,7 @@ if (pdfBtn) {
                     s.style.display = 'inline-block';
                     s.style.verticalAlign = 'middle';
                     if (s.classList.contains('note-brand')) {
-                        // PDF Specific: CSS top: -5px handles the main shift.
-                        // Setting transform to 0 to avoid interference.
-                        s.style.transform = 'translateY(0px)';
+                        s.style.transform = 'translateY(-4px)';
                     }
                 });
             }
@@ -1151,8 +1090,8 @@ if (pdfBtn) {
         const pdfStyle = document.createElement('style');
         pdfStyle.innerHTML = `
             #results-section .result-item { 
-                grid-template-columns: 3fr 1.1fr 1.1fr 1.2fr !important; /* give Name col more space for disclaimer */
-                gap: 0.8rem !important; /* Reduce gap slightly to save space */
+                grid-template-columns: 2.8fr 0.9fr 0.8fr 1fr !important; /* Widened Quantity column */
+                gap: 0.5rem !important;
             }
             #results-section .col-name { 
                 font-size: 0.75rem !important;
@@ -1164,11 +1103,6 @@ if (pdfBtn) {
             #results-section .col-qty, 
             #results-section .col-price {
                 font-size: 0.80rem !important;
-            }
-            /* Explicitly target brand in PDF if inline styles behave weirdly */
-            .note-brand {
-                position: relative;
-                top: -4px !important; 
             }
         `;
         element.appendChild(pdfStyle);
@@ -1210,98 +1144,44 @@ const emailBtnSend = document.getElementById('email-btn-send');
 if (emailBtnSend) {
     emailBtnSend.addEventListener('click', () => {
         const emailInput = document.getElementById('user-email');
-        const nameInput = document.getElementById('user-name');
-        const phoneInput = document.getElementById('user-phone');
-
         const emailTo = emailInput.value.trim();
-        const userName = nameInput ? nameInput.value.trim() : '';
-        const userPhone = phoneInput ? phoneInput.value.trim() : '';
 
         if (!emailTo) {
             alert("Molim vas upišite email adresu.");
             return;
         }
 
-        const items = document.querySelectorAll('.result-item:not(.result-header-row):not(.grand-total)');
+        const items = document.querySelectorAll('.result-item:not(.result-header-row)');
 
         // Prepare FormData
         const formData = new FormData();
         formData.append('email', emailTo);
-        // Try to send copy to user via _cc or similar if supported, or rely on Formspree settings.
-        // Adding _cc field (works on some Formspree plans, harmless if not)
-        formData.append('_cc', emailTo);
-        formData.append('_subject', `Izračun materijala: ${currentModule.toUpperCase()}`);
-
-        // Construct Rich Message Body
-        // Intro Text
-        // Construct Rich Message Body
-
-        // 1. Customer Contacts (First, per 2LMF request)
-        let messageBody = "";
-        if (emailTo) {
-            messageBody += "--------------------------------------------------\n";
-            messageBody += "Podaci o kupcu:\n";
-            if (userName) messageBody += `Ime i prezime: ${userName}\n`;
-            if (userPhone) messageBody += `Telefon: ${userPhone}\n`;
-            messageBody += `Email: ${emailTo}\n`;
-            messageBody += "--------------------------------------------------\n\n";
-        }
-
-        // 2. Greeting (for Customer)
-        messageBody += "Poštovani,\n\n";
-        messageBody += "Hvala Vam na upitu.\n";
-        messageBody += "Kratki informativni izračun nalazi se niže u mailu.\n\n";
+        formData.append('A_Naslov', `Izračun materijala: ${currentModule.toUpperCase()}`);
 
         let index = 1;
+
         items.forEach(item => {
-            // Clean up name (remove HTML tags for email text)
-            let name = item.querySelector('.col-name').innerText.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+            const name = item.querySelector('.col-name').innerText;
+            const qty = item.querySelector('.col-qty').innerText;
+            const price = item.querySelector('.col-price').innerText;
+            const total = item.querySelector('.col-total').innerText;
 
-            // Format numbers nicely
-            const qty = item.querySelector('.col-qty').innerText.replace(/\n/g, '').trim();
-            const price = item.querySelector('.col-price').innerText.replace(/\n/g, '').trim();
-            const total = item.querySelector('.col-total').innerText.replace(/\n/g, '').trim();
-
-            // Format: 
-            // 04. Pješačka vrata 1000x1200mm (sidro vijci...)
-            //      količina |   jed. cijena |    ukupno
-            //        10 kom |       29,00 € | 290,00 €
-
-            const idxStr = index < 10 ? '0' + index : index;
-            messageBody += `${idxStr}. ${name}\n`;
-
-            // Header for this item (Right Aligned)
-            const colWidth = 18;
-            const hQty = "količina".padStart(colWidth); // "       količina"
-            const hPrice = "jed. cijena".padStart(colWidth); // "    jed. cijena"
-
-            messageBody += `${hQty} | ${hPrice} | ukupno\n`;
-
-            // Values aligned
-            const vQty = qty.padStart(colWidth);
-            const vPrice = price.padStart(colWidth);
-
-            messageBody += `${vQty} | ${vPrice} | ${total}\n\n`;
-
+            // Simple formatting: Name as Key, Details as Value
+            // Adding number prefix to force order
+            const key = `${index < 10 ? '0' + index : index}. ${name}`;
+            const value = `${qty} | ${price} | ${total}`;
+            formData.append(key, value);
             index++;
         });
 
         // Add Grand Total logic
-        const grandTotal = document.querySelector('.result-total-row .col-total');
+        const grandTotal = document.querySelector('.grand-total .col-total');
         if (grandTotal) {
-            messageBody += "--------------------------------------------------\n";
-            messageBody += "SVEUKUPNO: " + grandTotal.innerText + "\n";
-            messageBody += "--------------------------------------------------\n";
+            formData.append('99_SVEUKUPNO', grandTotal.innerText);
         }
 
-        // 4. Signature (at the end)
-        messageBody += "\nLijepi pozdrav!\n\n";
-        messageBody += "Vaš 2LMF PRO\n";
-        messageBody += "Mob: +385 95 311 5007\n";
-        messageBody += "Email: 2lmf.info@gmail.com\n";
-
-        // Inject compiled message
-        formData.append('message', messageBody);
+        // Add Contact Info footer equivalent
+        formData.append('Z_Napomena', 'Ovo je informativni izračun sa 2LMF PRO kalkulatora.');
 
         // Send via AJAX to Formspree
         const originalText = emailBtnSend.innerHTML;
@@ -1317,7 +1197,7 @@ if (emailBtnSend) {
         })
             .then(response => {
                 if (response.ok) {
-                    alert("Izračun je uspješno poslan na vaš email! (v11)");
+                    alert("Izračun je uspješno poslan na vaš email!");
                     emailInput.value = '';
                 } else {
                     return response.json().then(data => {
@@ -1341,5 +1221,4 @@ if (emailBtnSend) {
 }
 
 // Load default
-// Load default
-loadModule('fence');
+loadModule('hydro');
