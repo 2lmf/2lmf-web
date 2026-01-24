@@ -827,84 +827,81 @@ function calculateFence(data) {
             unit: 'kom',
             price: 0.5
         });
-        unit: 'kom',
-            price: 0.5
-    });
-}
-
-// 5. Gate (Pješačka vrata)
-if (gateNeeded && gateDim) {
-    // Placeholder prices logic
-    let gatePrice = 250;
-    if (gateDim === '1000x1200') gatePrice = 270;
-    if (gateDim === '1000x1500') gatePrice = 300;
-    if (gateDim === '1000x1700') gatePrice = 330;
-    if (gateDim === '1000x2000') gatePrice = 360;
-
-    items.push({
-        name: `Pješačka vrata jednokrilna ${gateDim}mm (Komplet)`,
-        value: 1,
-        unit: 'kpl',
-        price: gatePrice
-    });
-}
-
-// 6. Corners (Additional posts/material logic could go here)
-if (corners > 0) {
-    // Maybe added cost for corner clamps or specific solution
-    items.push({
-        name: 'Kutni setovi (dodatno)',
-        value: corners,
-        unit: 'kom',
-        price: 5
-    });
-}
-
-// 6. Installation
-if (installation) {
-    let installPrice = 16; // Base price per m
-    // simple logic: higher fence = more expensive?
-    if (height > 153) installPrice = 18;
-    if (postType === 'concrete') installPrice += 5; // Concrete work is harder
-
-    let installName = 'Montaža ograde (ključ u ruke)';
-    if (postType === 'concrete') {
-        installName += '<br><small class="text-muted d-block" style="font-weight: normal; font-size: 0.85em;">(iskop i beton uključen u cijenu montaže)</small>';
     }
 
-    // Gate installation extra? Probably. Let's add a fixed amount for gate install if selected.
-    let totalInstallPrice = length * installPrice;
-    if (gateNeeded) {
-        const gateInstallPrice = 60; // Fixed price for gate install
-        totalInstallPrice += gateInstallPrice;
-        installName += ` + Montaža vrata`;
-    }
+    // 5. Gate (Pješačka vrata)
+    if (gateNeeded && gateDim) {
+        // Placeholder prices logic
+        let gatePrice = 250;
+        if (gateDim === '1000x1200') gatePrice = 270;
+        if (gateDim === '1000x1500') gatePrice = 300;
+        if (gateDim === '1000x1700') gatePrice = 330;
+        if (gateDim === '1000x2000') gatePrice = 360;
 
-    items.push({
-        name: installName,
-        value: 1, // Changed to 1 paušal or keep length but adjust unit price?
-        // To keep logic simple: Value is Length, but if gate is added, the math gets tricky if we just multiply.
-        // Better: "Montaža ograde" line + "Montaža vrata" line?
-        // User requested: "Below gate buttons note: ... included in price". This refers to the gate KIT price.
-        // For installation, I will assume it's linear.
-        // Let's stick to linear for fence, and maybe add specific line for gate install if robust.
-        // For now, I'll just keep the linear calculation for fence and add separate item for gate install to be clear.
-        value: length.toFixed(2),
-        unit: 'm',
-        price: installPrice
-    });
-
-    if (gateNeeded) {
         items.push({
-            name: 'Montaža pješačkih vrata',
+            name: `Pješačka vrata jednokrilna ${gateDim}mm (Komplet)`,
             value: 1,
-            unit: 'kom',
-            price: 60 // Placeholder
+            unit: 'kpl',
+            price: gatePrice
         });
     }
-}
 
-return items;
+    // 6. Corners (Additional posts/material logic could go here)
+    if (corners > 0) {
+        // Maybe added cost for corner clamps or specific solution
+        items.push({
+            name: 'Kutni setovi (dodatno)',
+            value: corners,
+            unit: 'kom',
+            price: 5
+        });
+    }
+
+    // 6. Installation
+    if (installation) {
+        let installPrice = 16; // Base price per m
+        // simple logic: higher fence = more expensive?
+        if (height > 153) installPrice = 18;
+        if (postType === 'concrete') installPrice += 5; // Concrete work is harder
+
+        let installName = 'Montaža ograde (ključ u ruke)';
+        if (postType === 'concrete') {
+            installName += '<br><small class="text-muted d-block" style="font-weight: normal; font-size: 0.85em;">(iskop i beton uključen u cijenu montaže)</small>';
+        }
+
+        // Gate installation extra? Probably. Let's add a fixed amount for gate install if selected.
+        let totalInstallPrice = length * installPrice;
+        if (gateNeeded) {
+            const gateInstallPrice = 60; // Fixed price for gate install
+            totalInstallPrice += gateInstallPrice;
+            installName += ` + Montaža vrata`;
+        }
+
+        items.push({
+            name: installName,
+            value: 1, // Changed to 1 paušal or keep length but adjust unit price?
+            // To keep logic simple: Value is Length, but if gate is added, the math gets tricky if we just multiply.
+            // Better: "Montaža ograde" line + "Montaža vrata" line?
+            // User requested: "Below gate buttons note: ... included in price". This refers to the gate KIT price.
+            // For installation, I will assume it's linear.
+            // Let's stick to linear for fence, and maybe add specific line for gate install if robust.
+            // For now, I'll just keep the linear calculation for fence and add separate item for gate install to be clear.
+            value: length.toFixed(2),
+            unit: 'm',
+            price: installPrice
+        });
+
+        if (gateNeeded) {
+            items.push({
+                name: 'Montaža pješačkih vrata',
+                value: 1,
+                unit: 'kom',
+                price: 60 // Placeholder
+            });
+        }
+    }
+
+    return items;
 }
 
 function displayResults(items) {
