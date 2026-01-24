@@ -113,11 +113,11 @@ const templates = {
                     <input type="text" id="user-name" name="userName" placeholder="Vaše ime">
                 </div>
                 <div class="form-group">
-                    <label for="user-email">Email</label>
+                    <label for="user-email">Email *</label>
                     <input type="email" id="user-email" name="userEmail" placeholder="Vaš email">
                 </div>
                 <div class="form-group">
-                    <label for="user-phone">Kontakt broj</label>
+                    <label for="user-phone">Kontakt broj *</label>
                     <input type="tel" id="user-phone" name="userPhone" placeholder="Br. telefona">
                 </div>
                 <div class="form-group">
@@ -197,11 +197,11 @@ const templates = {
                     <input type="text" id="user-name" name="userName" placeholder="Vaše ime">
                 </div>
                 <div class="form-group">
-                    <label for="user-email">Email</label>
+                    <label for="user-email">Email *</label>
                     <input type="email" id="user-email" name="userEmail" placeholder="Vaš email">
                 </div>
                 <div class="form-group">
-                    <label for="user-phone">Kontakt broj</label>
+                    <label for="user-phone">Kontakt broj *</label>
                     <input type="tel" id="user-phone" name="userPhone" placeholder="Br. telefona">
                 </div>
                 <div class="form-group">
@@ -358,11 +358,11 @@ const templates = {
                     <input type="text" id="user-name" name="userName" placeholder="Vaše ime">
                 </div>
                 <div class="form-group">
-                    <label for="user-email">Email</label>
+                    <label for="user-email">Email *</label>
                     <input type="email" id="user-email" name="userEmail" placeholder="Vaš email">
                 </div>
                 <div class="form-group">
-                    <label for="user-phone">Kontakt broj</label>
+                    <label for="user-phone">Kontakt broj *</label>
                     <input type="tel" id="user-phone" name="userPhone" placeholder="Br. telefona">
                 </div>
                 <div class="form-group">
@@ -1221,4 +1221,13 @@ if (emailBtnSend) {
 }
 
 // Load default
-loadModule('hydro');
+loadModule('fence');
+
+// --- RESTORED EMAIL LOGIC ---
+// (This logic was missing in the reverted file)
+// Helper to clean HTML from string
+function stripHtml(html) {
+    let tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+}
