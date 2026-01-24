@@ -300,9 +300,7 @@ nav a:hover {
 }
 
 .nav-btn.disabled-module {
-    opacity: 0.4;
     pointer-events: none;
-    text-decoration: line-through;
     cursor: not-allowed;
     background: repeating-linear-gradient(45deg,
             #e74c3c,
