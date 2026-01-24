@@ -299,6 +299,17 @@ nav a:hover {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
+.nav-btn.disabled-module {
+    opacity: 0.5;
+    pointer-events: none;
+    text-decoration: line-through;
+    cursor: not-allowed;
+    background: #e0e0e0;
+    /* Grey background */
+    border-color: #ccc;
+    color: #888;
+}
+
 .nav-btn:hover::before {
     transform: scaleY(1);
 }

@@ -1350,4 +1350,4 @@ if (emailBtnSend) {
 }
 
 // Load default
-loadModule('facade');
+loadModule('fence');
