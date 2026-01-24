@@ -6,7 +6,7 @@ const resultsSection = document.getElementById('results-section');
 const resultsContainer = document.getElementById('results-container');
 
 // State
-let currentModule = 'fence';
+let currentModule = 'hydro';
 
 // Module HTML Layouts (later we can move these to separate files if needed)
 const templates = {
@@ -198,11 +198,11 @@ const templates = {
                 </div>
                 <div class="form-group">
                     <label for="user-email">Email</label>
-                    <input type="email" id="user-email" name="userEmail" placeholder="Vaš email *">
+                    <input type="email" id="user-email" name="userEmail" placeholder="Vaš email">
                 </div>
                 <div class="form-group">
                     <label for="user-phone">Kontakt broj</label>
-                    <input type="tel" id="user-phone" name="userPhone" placeholder="Br. telefona *">
+                    <input type="tel" id="user-phone" name="userPhone" placeholder="Br. telefona">
                 </div>
                 <div class="form-group">
                     <label for="user-location">Lokacija</label>
@@ -504,6 +504,15 @@ window.selectGateSize = function (size, btn) {
 
     // UI
     document.querySelectorAll('.gate-size-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+window.selectColor = function (color, btn) {
+    const input = document.getElementById('fence-color');
+    input.value = color;
+
+    // UI
+    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 }
 
@@ -1341,5 +1350,4 @@ if (emailBtnSend) {
 }
 
 // Load default
-// Load default
-loadModule('fence');
+loadModule('hydro');
