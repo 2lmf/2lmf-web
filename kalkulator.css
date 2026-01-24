@@ -300,14 +300,18 @@ nav a:hover {
 }
 
 .nav-btn.disabled-module {
-    opacity: 0.5;
+    opacity: 0.4;
     pointer-events: none;
     text-decoration: line-through;
     cursor: not-allowed;
-    background: #e0e0e0;
-    /* Grey background */
-    border-color: #ccc;
-    color: #888;
+    background: repeating-linear-gradient(45deg,
+            #e74c3c,
+            #e74c3c 10px,
+            #ffffff 10px,
+            #ffffff 20px);
+    border-color: #999;
+    color: #333;
+    font-weight: 700;
 }
 
 .nav-btn:hover::before {
