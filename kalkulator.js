@@ -1105,6 +1105,28 @@ function displayResults(items) {
 
     resultsContainer.appendChild(totalDiv);
 
+    // --- NEW: Terms & Conditions Block (Web & PDF) ---
+    const termsDiv = document.createElement('div');
+    termsDiv.style.marginTop = '2rem';
+    termsDiv.style.marginBottom = '1.5rem';
+    termsDiv.style.padding = '1rem';
+    termsDiv.style.border = '1px solid #ddd';
+    termsDiv.style.backgroundColor = '#f9f9f9';
+    termsDiv.style.fontSize = '0.9rem';
+    termsDiv.style.lineHeight = '1.6';
+    termsDiv.style.color = '#333';
+
+    termsDiv.innerHTML = `
+        <div style="margin-bottom: 0.5rem;"><strong>Plaćanje:</strong> avans - uplatom na žiro račun</div>
+        <div style="margin-bottom: 0.5rem;"><strong>Minimalni iznos kupovine:</strong> 200,00 eur</div>
+        <div style="margin-bottom: 0.5rem;">Sve cijene su sa PDV-om, koji ne smije biti iskazan na računu*</div>
+        <div style="font-size: 0.8em; color: #555; margin-top: 1rem;">
+            * Porezni obveznik nije u sustavu PDV- a, temeljem članka 90. Zakona o porezu na dodanu vrijednost
+        </div>
+    `;
+    resultsContainer.appendChild(termsDiv);
+    // -------------------------------------------------
+
     // Add Persistent Footer Note (Web & PDF)
     // Add Persistent Footer Note (Web & PDF)
     const footerNote = document.createElement('div');
