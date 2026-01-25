@@ -6,7 +6,7 @@ const resultsSection = document.getElementById('results-section');
 const resultsContainer = document.getElementById('results-container');
 
 // State
-let currentModule = 'fence';
+let currentModule = 'hydro';
 
 // Module HTML Layouts (later we can move these to separate files if needed)
 const templates = {
@@ -1434,4 +1434,4 @@ if (emailBtnSend) {
 }
 
 // Load default
-loadModule('fence');
+loadModule('hydro');
