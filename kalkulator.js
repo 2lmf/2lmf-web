@@ -1313,8 +1313,16 @@ if (emailBtnSend) {
         formData.append('email', emailTo);
         // Try to send copy to user via _cc or similar if supported, or rely on Formspree settings.
         // Adding _cc field (works on some Formspree plans, harmless if not)
-        formData.append('_cc', emailTo);
-        formData.append('_subject', `Izračun materijala: ${currentModule.toUpperCase()}`);
+        // Translate Module Name
+        const moduleNames = {
+            'hydro': 'HIDROIZOLACIJA',
+            'thermal': 'TERMOIZOLACIJA',
+            'facade': 'FASADA',
+            'fence': 'PANEL OGRADE'
+        };
+        const subjectModule = moduleNames[currentModule] || currentModule.toUpperCase();
+
+        formData.append('_subject', `Izračun materijala: ${subjectModule}`);
 
         // Construct Rich Message Body
         // Intro Text
