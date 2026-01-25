@@ -1460,7 +1460,7 @@ if (emailBtnSend) {
             payload.append(pair[0], pair[1]);
         }
 
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwx0VheQaMxmdQ5whZFMsKxySqlHKSQQHAngtyCuRsqGSCuPIVjJoKXkw-ztyiaBksi/exec";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZ-ucIMVdvNyL58EuPeutRXizys7UagR8PTk5Gr0MY6JRg6vHk4dqnJtEx81RV1bet/exec";
 
         fetch(GOOGLE_SCRIPT_URL, {
             method: "POST",
