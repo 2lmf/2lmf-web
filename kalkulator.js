@@ -1401,7 +1401,46 @@ if (emailBtnSend) {
         messageBody += "Mob: +385 95 311 5007\n";
         messageBody += "Email: 2lmf.info@gmail.com\n";
 
-        // Inject compiled message
+        // Create structured JSON data for Backend (Admin features)
+        const itemsData = [];
+        items.forEach(item => {
+            // Extract raw texts
+            let name = item.querySelector('.col-name').innerText.replace(/\n/g, ' ').trim();
+            let qtyStr = item.querySelector('.col-qty').innerText.replace(/\n/g, '').trim();
+            let priceStr = item.querySelector('.col-price').innerText.replace(/\n/g, '').trim(); // "29,00 €" or "-"
+
+            // Parse values (Remove € and standardise numbers)
+            // Qty: "10 kom" -> 10, unit: "kom"
+            // Price: "29,00 €" -> 29.00
+
+            let qty = parseFloat(qtyStr.split(' ')[0].replace(',', '.')) || 0;
+            let unit = qtyStr.split(' ')[1] || '';
+            let price = 0;
+            if (priceStr !== '-') {
+                price = parseFloat(priceStr.replace('€', '').replace('.', '').replace(',', '.').trim()) || 0;
+                // Note: toLocaleString with hr-HR might have '.' as thousand separator if large.
+                // Safer parse: regex remove all non-digits/commas, replace comma with dot.
+                // Simple approach for now given input constraints:
+                // priceStr is output of toLocaleString('hr-HR'). "1.234,56 €"
+                let cleanPrice = priceStr.replace('€', '').trim();
+                // Remove dots (thousands)
+                cleanPrice = cleanPrice.replace(/\./g, '');
+                // Replace comma (decimal)
+                cleanPrice = cleanPrice.replace(',', '.');
+                price = parseFloat(cleanPrice) || 0;
+            }
+
+            itemsData.push({
+                name: name,
+                qty: qty,
+                unit: unit,
+                price_sell: price // Sales Price (Unit)
+            });
+        });
+
+        formData.append('items_json', JSON.stringify(itemsData));
+
+        // Inject compiled message (Customer View)
         formData.append('message', messageBody);
 
         // Send via AJAX to Google Apps Script Web App
