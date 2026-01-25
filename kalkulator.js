@@ -1407,7 +1407,7 @@ if (emailBtnSend) {
             payload.append(pair[0], pair[1]);
         }
 
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjCmXtSRQaG6xAPqcTRuYPSrSktDeDQsWe76lWK6jmxxSLGBK7HKP2jcNF3myBaY6w/exec";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzv9Wjp0gC_5LhOybE6G0l6NkZQle75eIvc3V9BH1h2WJBsUi9Mwl_1ckcItwG0jlA/exec";
 
         fetch(GOOGLE_SCRIPT_URL, {
             method: "POST",
