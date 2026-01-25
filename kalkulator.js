@@ -1242,11 +1242,12 @@ if (pdfBtn) {
             .result-total-row {
                 padding: 1rem !important; /* Compact Total Row */
                 margin-top: 1rem !important;
+                font-size: 0.9rem !important; /* Slightly smaller total text */
             }
             .terms-block {
                 padding: 0.5rem !important;
                 margin-top: 1rem !important;
-                font-size: 0.75rem !important; 
+                font-size: 0.70rem !important; /* Match result items */
             }
             /* Explicitly target brand in PDF if inline styles behave weirdly */
             .note-brand {
