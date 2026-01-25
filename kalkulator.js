@@ -821,15 +821,33 @@ function calculateFence(data) {
         panelName = `3D Panel ${height}cm (${thickness}mm) - ${color === '7016' ? 'Antracit' : 'Zeleni'}`;
     }
 
-    // Price lookup (Mockup - would depend on type/height)
-    // Here we just define standard prices for example
+    // Price lookup (Updated from User Table)
     let panelPrice = 0;
-    // Simple lookup based on height for demo
-    if (height === 103) panelPrice = 25;
-    if (height === 123) panelPrice = 29;
-    if (height === 153) panelPrice = 35;
-    if (height === 173) panelPrice = 40;
-    if (height === 203) panelPrice = 48;
+
+    if (panelType === '2d') {
+        // Logic for 2D (Mapped: 83, 103, 123, 143, 163, 183, 203)
+        // Map drop-down heights (103, 123, 153->143?, 173->163?, 203) to closest available
+        // User provided specific heights for 2D: 83, 103, 123, 143, 163, 183, 203.
+        // Dropdown has standard heights: 103, 123, 153, 173, 203.
+        // We will map 153->143(? or match height) and 173->163/183?
+        // Let's assume standard nearest lower or exact usage.
+        // Wait, current drop down has: 103, 123, 153, 173, 203.
+        // 2D 153 doesn't exist in list, 143 and 163 do. 
+        // Best fit mapping:
+        let hKey = height;
+        if (height === 153) hKey = 143; // Approx
+        if (height === 173) hKey = 163; // Approx
+        if (height === 203) hKey = 203;
+
+        panelPrice = prices.fence.panel_2d[hKey] || 0;
+    } else {
+        const thickness = data.panelThickness || '4';
+        if (thickness === '5') {
+            panelPrice = prices.fence.panel_3d_5[height] || 0;
+        } else {
+            panelPrice = prices.fence.panel_3d_4[height] || 0;
+        }
+    }
 
     items.push({
         name: panelName,
@@ -873,13 +891,36 @@ function calculateFence(data) {
 
     // Number of posts = Number of Panels + 1 + Corners (extra post per corner)
     const numPosts = numPanels + 1 + corners;
+
+    // Post pricing based on height
+    // We map spec height (e.g. 105, 125, 155) to PRICE height (85, 105, 125, 155, 175, 205).
+    // Note: Concrete posts (longer) are not in the user's price list explicitly as "Concrete Post".
+    // User only sent "STUP s bazom / pločom / stopom" (Post with base).
+    // Assumption: Use the base post price logic for *all* posts for now, or map concrete height to nearest base height?
+    // "STUP 50x50" prices.
+    // If user needs concrete posts (longer), they usually cost more. 
+    // BUT user only gave one list. I will use the mapped height to find price from that list.
+    // E.g. Concrete 155 -> Price of Post 155.
+
     const postHeight = postType === 'concrete' ? specs.concrete : specs.plate;
+
+    // Nearest lookup for post price match
+    // Available: 85, 105, 125, 155, 175, 205
+    let pPrice = 0;
+
+    // Simple closest match logic
+    if (postHeight <= 95) pPrice = prices.fence.posts[85];
+    else if (postHeight <= 115) pPrice = prices.fence.posts[105];
+    else if (postHeight <= 135) pPrice = prices.fence.posts[125];
+    else if (postHeight <= 165) pPrice = prices.fence.posts[155]; // Covers 155
+    else if (postHeight <= 185) pPrice = prices.fence.posts[175];
+    else pPrice = prices.fence.posts[205];
 
     items.push({
         name: `Stup 60x60mm (v${postHeight}cm) ${postType === 'plate' ? 's pločicom' : 'za beton.'}`,
         value: numPosts,
         unit: 'kom',
-        price: 15 // Placeholder
+        price: pPrice || 0
     });
 
     // 3. Mounting Sets (Spojnice)
