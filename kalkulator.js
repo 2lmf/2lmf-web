@@ -1107,6 +1107,7 @@ function displayResults(items) {
 
     // --- NEW: Terms & Conditions Block (Web & PDF) ---
     const termsDiv = document.createElement('div');
+    termsDiv.className = 'terms-block'; // Class for PDF targeting
     termsDiv.style.marginTop = '2rem';
     termsDiv.style.marginBottom = '1.5rem';
     termsDiv.style.padding = '1rem';
@@ -1223,19 +1224,29 @@ if (pdfBtn) {
         const pdfStyle = document.createElement('style');
         pdfStyle.innerHTML = `
             #results-section .result-item { 
-                grid-template-columns: 3fr 1.1fr 1.1fr 1.2fr !important; /* give Name col more space for disclaimer */
-                gap: 0.8rem !important; /* Reduce gap slightly to save space */
+                grid-template-columns: 3fr 1.1fr 1.1fr 1.2fr !important; 
+                gap: 0.5rem !important; 
+                padding: 0.5rem !important; /* Reduced padding */
             }
             #results-section .col-name { 
-                font-size: 0.75rem !important;
+                font-size: 0.65rem !important; /* Smaller font */
             }
             #results-section .col-total { 
                 white-space: nowrap !important;
-                font-size: 0.85rem !important;
+                font-size: 0.75rem !important; /* Smaller font */
             }
             #results-section .col-qty, 
             #results-section .col-price {
-                font-size: 0.80rem !important;
+                font-size: 0.70rem !important; /* Smaller font */
+            }
+            .result-total-row {
+                padding: 1rem !important; /* Compact Total Row */
+                margin-top: 1rem !important;
+            }
+            .terms-block {
+                padding: 0.5rem !important;
+                margin-top: 1rem !important;
+                font-size: 0.75rem !important; 
             }
             /* Explicitly target brand in PDF if inline styles behave weirdly */
             .note-brand {
