@@ -1378,6 +1378,15 @@ if (emailBtnSend) {
             messageBody += "--------------------------------------------------\n";
         }
 
+        // 3a. Terms & Conditions (Text Version)
+        if (currentModule === 'fence') {
+            messageBody += "\nUvjeti kupnje:\n";
+            messageBody += "Plaćanje: avans - uplatom na žiro račun\n";
+            messageBody += "Minimalni iznos kupovine: 200,00 eur\n";
+            messageBody += "Sve cijene su sa PDV-om, koji ne smije biti iskazan na računu\n";
+            messageBody += "(Porezni obveznik nije u sustavu PDV- a, temeljem članka 90. Zakona o porezu na dodanu vrijednost)\n";
+        }
+
         // 4. Signature (at the end)
         messageBody += "\nLijepi pozdrav!\n\n";
         messageBody += "Vaš 2LMF PRO\n";
