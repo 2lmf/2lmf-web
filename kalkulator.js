@@ -1396,30 +1396,32 @@ if (emailBtnSend) {
         // Inject compiled message
         formData.append('message', messageBody);
 
-        // Send via AJAX to Formspree
+        // Send via AJAX to Google Apps Script Web App
         const originalText = emailBtnSend.innerHTML;
         emailBtnSend.innerHTML = '⏳ Šaljem...';
         emailBtnSend.disabled = true;
 
-        fetch("https://formspree.io/f/mwvlndlq", {
+        // Use URLSearchParams for Google Script e.parameter compatibility
+        const payload = new URLSearchParams();
+        for (const pair of formData) {
+            payload.append(pair[0], pair[1]);
+        }
+
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyjCmXtSRQaG6xAPqcTRuYPSrSktDeDQsWe76lWK6jmxxSLGBK7HKP2jcNF3myBaY6w/exec";
+
+        fetch(GOOGLE_SCRIPT_URL, {
             method: "POST",
-            headers: {
-                "Accept": "application/json"
-            },
-            body: formData
+            body: payload,
+            // Google Script redirects; 'follow' is default but good to be explicit.
+            redirect: "follow"
         })
-            .then(response => {
-                if (response.ok) {
-                    alert("Izračun je uspješno poslan na vaš email! (v11)");
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === 'success') {
+                    alert("Izračun je uspješno poslan na vaš email! (Google Script)");
                     emailInput.value = '';
                 } else {
-                    return response.json().then(data => {
-                        if (Object.hasOwn(data, 'errors')) {
-                            alert(data["errors"].map(error => error["message"]).join(", "))
-                        } else {
-                            alert("Došlo je do greške. Molimo pokušajte ponovno.");
-                        }
-                    })
+                    alert("Došlo je do greške: " + (data.error || "Nepoznata greška"));
                 }
             })
             .catch(error => {
