@@ -1311,6 +1311,12 @@ if (emailBtnSend) {
         // Prepare FormData
         const formData = new FormData();
         formData.append('email', emailTo);
+        formData.append('name', userName); // NEW
+        formData.append('phone', userPhone); // NEW
+        // location field is userLocation input
+        const locInput = document.getElementById('user-location');
+        if (locInput) formData.append('location', locInput.value);
+
         // Try to send copy to user via _cc or similar if supported, or rely on Formspree settings.
         // Adding _cc field (works on some Formspree plans, harmless if not)
         formData.append('_cc', emailTo);
