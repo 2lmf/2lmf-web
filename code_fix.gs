@@ -1,6 +1,25 @@
-// -----------------------------------------------------------------------
-// 2LMF PRO - Email System (Fixed V2)
-// -----------------------------------------------------------------------
+// --- BUSINESS LOGIC: MATERIAL CONFIGURATION ---
+// Ovdje možete podesiti nabavne cijene i dobavljače. 
+// Sustav traži ključnu riječ u nazivu materijala.
+const MATERIAL_CONFIG = {
+  "XPS": { buy_factor: 0.85, supplier: "RAVA" },
+  "Kamena vuna": { buy_factor: 0.82, supplier: "RAVA" },
+  "TPO": { buy_factor: 0.75, supplier: "RAVA" },
+  "PVC": { buy_factor: 0.75, supplier: "RAVA" },
+  "Diamond": { buy_factor: 0.80, supplier: "RAVA" },
+  "Ruby": { buy_factor: 0.80, supplier: "RAVA" },
+  "Vapor": { buy_factor: 0.80, supplier: "RAVA" },
+  "2D panel": { buy_factor: 0.90, supplier: "Dobavljač Ograde" },
+  "3D panel": { buy_factor: 0.90, supplier: "Dobavljač Ograde" },
+  "Stup": { buy_factor: 0.88, supplier: "Dobavljač Ograde" },
+  "Pješačka vrata": { buy_factor: 0.85, supplier: "Dobavljač Ograde" },
+  "Spojnice": { buy_factor: 0.50, supplier: "Dobavljač Ograde" },
+  "Sidreni vijci": { buy_factor: 0.50, supplier: "Dobavljač Ograde" },
+  "Aquamat": { buy_factor: 0.80, supplier: "Isomat" },
+  "Isoflex": { buy_factor: 0.80, supplier: "Isomat" },
+  "AK-20": { buy_factor: 0.80, supplier: "Isomat" },
+  "Usluga montaže": { buy_factor: 0.70, supplier: "Vanjski kooperant" }
+};
 
 function doPost(e) {
   try {
@@ -9,18 +28,18 @@ function doPost(e) {
     var emailUser = params.email;
     var nameUser = params.name || "Kupac";
     var phoneUser = params.phone || "";
-    var messageBody = params.message; // Fallback plain text
     var subject = params._subject || "2LMF Kalkulator Izračun";
     var itemsJson = params.items_json || "[]";
     var items = JSON.parse(itemsJson);
-    var grandTotal = params.grand_total || "0,00 €"; // If sent from frontend
 
-    // 1. Generate HTML Tables
-    var customerHtml = generateCustomerHtml(items, nameUser, subject);
-    var adminHtml = generateAdminHtml(items, nameUser, emailUser, phoneUser, subject);
+    // 1. Obrada podataka s poslovnom logikom
+    var enrichedItems = enrichItemsWithBusinessLogic(items);
 
-    // 2. Send Immediate Emails
-    // A) To Customer (Orange Theme)
+    // 2. Generiranje HTML tablica
+    var customerHtml = generateCustomerHtml(enrichedItems, nameUser, subject);
+    var adminHtml = generateAdminHtml(enrichedItems, nameUser, emailUser, phoneUser, subject);
+
+    // 3. Slanje mailova
     MailApp.sendEmail({
       to: emailUser,
       subject: subject,
@@ -29,14 +48,12 @@ function doPost(e) {
       name: "2LMF PRO Kalkulator"
     });
 
-    // B) To Admin (Detailed View)
     MailApp.sendEmail({
       to: "2lmf.info@gmail.com",
       subject: "[NOVI UPIT] " + nameUser + " - " + subject,
       htmlBody: adminHtml
     });
 
-    // 3. Schedule Delayed Follow-up
     queueFollowUp(emailUser, nameUser);
 
     return ContentService.createTextOutput(JSON.stringify({ 'result': 'success' }))
@@ -48,13 +65,33 @@ function doPost(e) {
   }
 }
 
+function enrichItemsWithBusinessLogic(items) {
+  return items.map(function(item) {
+    var config = { buy_factor: 0.80, supplier: "Ostalo" }; // Default
+    
+    for (var key in MATERIAL_CONFIG) {
+      if (item.name.toLowerCase().indexOf(key.toLowerCase()) !== -1) {
+        config = MATERIAL_CONFIG[key];
+        break;
+      }
+    }
+    
+    item.price_buy = item.price_sell * config.buy_factor;
+    item.supplier = config.supplier;
+    item.profit = item.price_sell - item.price_buy;
+    item.margin_pct = (item.profit / item.price_sell) * 100;
+    
+    return item;
+  });
+}
+
 function generateCustomerHtml(items, name, subject) {
-  var totalAmount = calculateTotal(items);
+  var totalAmount = calculateTotal(items, 'price_sell');
   
   var html = "<div style='font-family: Arial, sans-serif; color: #333; max-width: 600px;'>" +
-             "<h2 style='color: #FB8C00;'>2LMF PRO - Inforativni Izračun</h2>" +
+             "<h2 style='color: #FB8C00;'>2LMF PRO - Informativni Izračun</h2>" +
              "<p>Poštovani <b>" + name + "</b>,</p>" +
-             "<p>Zahvaljujemo na Vašem interesu. Ispod se nalazi specifikacija materijala prema Vašem upitu: <b>" + subject + "</b></p>" +
+             "<p>Zahvaljujemo na Vašem interesu. Ispod se nalazi specifikacija prema Vašem upitu: <b>" + subject + "</b></p>" +
              
              "<table style='width: 100%; border-collapse: collapse; margin-top: 20px;'>" +
              "<thead>" +
@@ -88,54 +125,57 @@ function generateCustomerHtml(items, name, subject) {
           
           "<div style='margin-top: 25px; padding: 15px; background-color: #fff3e0; border-left: 5px solid #FB8C00; font-size: 13px;'>" +
           "<b>NAPOMENA O CIJENAMA:</b><br>" +
-          "Budući da se stanje lagera konstantno mijenja, ovaj izračun (i trenutne cijene) vrijede 48 sati. Za fiksnu ponudu molimo potvrdite interes odgovorom na ovaj mail." +
+          "Budući da se stanje lagera konstantno mijenja, ovaj izračun (i trenutne cijene) vrijede 48 sati." +
           "</div>" +
-          
-          "<p style='margin-top: 20px;'>Slobodno nas kontaktirajte za sva dodatna pitanja.</p>" +
-          "<p>Lijep pozdrav,<br><b>Vaš 2LMF PRO Tim</b><br>Mob: +385 95 311 5007</p>" +
-          "</div>";
+          "<p>Lijep pozdrav,<br><b>Vaš 2LMF PRO Tim</b></p></div>";
           
   return html;
 }
 
 function generateAdminHtml(items, name, email, phone, subject) {
-  var totalAmount = calculateTotal(items);
+  var totalSell = calculateTotal(items, 'price_sell');
+  var totalBuy = calculateTotal(items, 'price_buy');
+  var totalProfit = totalSell - totalBuy;
   
   var html = "<div style='font-family: Arial, sans-serif; color: #333;'>" +
-             "<h2 style='color: #2c3e50;'>Novi Upit sa Weba</h2>" +
+             "<h2 style='color: #2c3e50;'>ADMIN REPORT: Novi Upit</h2>" +
              "<div style='background: #f4f4f4; padding: 15px; border-radius: 5px; margin-bottom: 20px;'>" +
-             "<b>Kupac:</b> " + name + "<br>" +
-             "<b>Email:</b> " + email + "<br>" +
-             "<b>Telefon:</b> " + phone + "<br>" +
+             "<b>Kupac:</b> " + name + " | <b>Email:</b> " + email + " | <b>Tel:</b> " + phone + "<br>" +
              "<b>Modul:</b> " + subject +
              "</div>" +
              
-             "<table style='width: 100%; border-collapse: collapse;'>" +
+             "<table style='width: 100%; border-collapse: collapse; font-size: 12px;'>" +
              "<thead>" +
              "<tr style='background-color: #34495e; color: white;'>" +
              "<th style='padding: 8px; text-align: left; border: 1px solid #ddd;'>Materijal</th>" +
-             "<th style='padding: 8px; text-align: center; border: 1px solid #ddd;'>Količina</th>" +
-             "<th style='padding: 8px; text-align: right; border: 1px solid #ddd;'>Prodajna Cijena</th>" +
-             "<th style='padding: 8px; text-align: right; border: 1px solid #ddd;'>Ukupno</th>" +
+             "<th style='padding: 8px; text-align: center; border: 1px solid #ddd;'>Kol.</th>" +
+             "<th style='padding: 8px; text-align: right; border: 1px solid #ddd;'>Prodajna</th>" +
+             "<th style='padding: 8px; text-align: right; border: 1px solid #ddd; background:#2ecc71;'>Nabavna</th>" +
+             "<th style='padding: 8px; text-align: right; border: 1px solid #ddd; background:#e67e22;'>Marža (€)</th>" +
+             "<th style='padding: 8px; text-align: center; border: 1px solid #ddd;'>Dobavljač</th>" +
              "</tr>" +
              "</thead>" +
              "<tbody>";
 
   items.forEach(function(item) {
-    var lineTotal = item.qty * item.price_sell;
     html += "<tr>" +
             "<td style='padding: 8px; border: 1px solid #ddd;'>" + item.name + "</td>" +
             "<td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>" + item.qty + " " + item.unit + "</td>" +
             "<td style='padding: 8px; border: 1px solid #ddd; text-align: right;'>" + item.price_sell.toLocaleString('hr-HR', {minimumFractionDigits: 2}) + " €</td>" +
-            "<td style='padding: 8px; border: 1px solid #ddd; text-align: right;'>" + lineTotal.toLocaleString('hr-HR', {minimumFractionDigits: 2}) + " €</td>" +
+            "<td style='padding: 8px; border: 1px solid #ddd; text-align: right; font-weight:bold;'>" + item.price_buy.toLocaleString('hr-HR', {minimumFractionDigits: 2}) + " €</td>" +
+            "<td style='padding: 8px; border: 1px solid #ddd; text-align: right;'>" + item.profit.toLocaleString('hr-HR', {minimumFractionDigits: 2}) + " €</td>" +
+            "<td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>" + item.supplier + "</td>" +
             "</tr>";
   });
 
   html += "</tbody>" +
           "<tfoot>" +
           "<tr style='font-weight: bold; background: #eee;'>" +
-          "<td colspan='3' style='padding: 8px; border: 1px solid #ddd; text-align: right;'>SUMARNO:</td>" +
-          "<td style='padding: 8px; border: 1px solid #ddd; text-align: right;'>" + totalAmount.toLocaleString('hr-HR', {minimumFractionDigits: 2}) + " €</td>" +
+          "<td colspan='2' style='padding: 8px; border: 1px solid #ddd;'>TOTALNI IZNOSI:</td>" +
+          "<td style='padding: 8px; border: 1px solid #ddd; text-align: right;'>" + totalSell.toLocaleString('hr-HR', {minimumFractionDigits: 2}) + " €</td>" +
+          "<td style='padding: 8px; border: 1px solid #ddd; text-align: right;'>" + totalBuy.toLocaleString('hr-HR', {minimumFractionDigits: 2}) + " €</td>" +
+          "<td style='padding: 8px; border: 1px solid #ddd; text-align: right; color:#d35400;'>" + totalProfit.toLocaleString('hr-HR', {minimumFractionDigits: 2}) + " €</td>" +
+          "<td style='padding: 8px; border: 1px solid #ddd; text-align: center;'>-</td>" +
           "</tr>" +
           "</tfoot>" +
           "</table>" +
@@ -144,110 +184,48 @@ function generateAdminHtml(items, name, email, phone, subject) {
   return html;
 }
 
-function calculateTotal(items) {
+function calculateTotal(items, priceField) {
   var total = 0;
   items.forEach(function(item) {
-    total += item.qty * item.price_sell;
+    total += item.qty * item[priceField];
   });
   return total;
 }
 
-// --- DISCLAIMER TEXT (UPDATED) ---
-function getDisclaimerText() {
-  return "--------------------------------------------------\n" +
-         "NAPOMENA O CIJENAMA:\n" +
-         "Budući da se stanje lagera konstantno mijenja, ovaj izračun (i trenutne cijene) \n" +
-         "vrijede 48 sati. Za fiksnu ponudu molimo potvrdite interes odgovorom na ovaj mail.\n" +
-         "--------------------------------------------------";
-}
-
-// --- FOLLOW UP QUEUE LOGIC ---
-// Trigger this function every 1 hour (Time-based trigger)
-// It checks if there are pending follow-ups
+// --- FOLLOW UP & TRIGGER LOGIC (KEEP AS IS) ---
 function processFollowUpQueue() {
   var props = PropertiesService.getScriptProperties();
   var queueJSON = props.getProperty("FOLLOW_UP_QUEUE");
   var queue = queueJSON ? JSON.parse(queueJSON) : [];
-  
   var now = new Date().getTime();
   var newQueue = [];
-  var processedCount = 0;
-
   for (var i = 0; i < queue.length; i++) {
     var item = queue[i];
-    // Check if 24 hours (86400000 ms) have passed, or e.g. 2 minutes for test
-    // Let's set it to 2 hours for "delayed check" as per typical request, or 24h.
-    // Assuming user wants some delay. Let's say 24 hours.
-    var delayTime = 24 * 60 * 60 * 1000; 
-    
-    if (now - item.timestamp > delayTime) {
-      // Time to send!
-      sendFeedbackEmail(item.email, item.name);
-      processedCount++;
-    } else {
-      // Keep in queue
-      newQueue.push(item);
-    }
+    if (now - item.timestamp > 86400000) { sendFeedbackEmail(item.email, item.name); } 
+    else { newQueue.push(item); }
   }
-
-  // Save cleaned queue
-  if (processedCount > 0 || newQueue.length !== queue.length) {
-    props.setProperty("FOLLOW_UP_QUEUE", JSON.stringify(newQueue));
-  }
+  props.setProperty("FOLLOW_UP_QUEUE", JSON.stringify(newQueue));
 }
 
-// Helper to add to queue
 function queueFollowUp(email, name) {
   var props = PropertiesService.getScriptProperties();
   var queueJSON = props.getProperty("FOLLOW_UP_QUEUE");
   var queue = queueJSON ? JSON.parse(queueJSON) : [];
-  
-  queue.push({
-    email: email,
-    name: name,
-    timestamp: new Date().getTime()
-  });
-  
+  queue.push({ email: email, name: name, timestamp: new Date().getTime() });
   props.setProperty("FOLLOW_UP_QUEUE", JSON.stringify(queue));
-  
-  // Ensure the trigger exists
   ensureTrigger();
 }
 
-// Sends the actual Feedback Email
 function sendFeedbackEmail(email, name) {
-  var subject = "Jeste li uspjeli pogledati ponudu? - 2LMF PRO";
-  var body = "Poštovani " + name + ",\n\n" +
-             "Jučer ste radili izračun na našem kalkulatoru.\n" +
-             "Javljamo se samo da provjerimo imate li kakvih pitanja ili trebate pomoć oko specifikacije?\n\n" +
-             "Slobodno odgovorite na ovaj mail ili nas nazovite.\n\n" +
-             "Lijepi pozdrav,\n" +
-             "2LMF Tim";
-             
-  // IMPORTANT: Send TO the customer using the stored email
   MailApp.sendEmail({
     to: email, 
-    subject: subject,
-    body: body
+    subject: "Jeste li uspjeli pogledati ponudu? - 2LMF PRO",
+    body: "Poštovani " + name + ",\n\nJavljamo se samo da provjerimo imate li kakvih pitanja oko jučerašnjeg izračuna?\n\nLijepi pozdrav,\n2LMF Tim"
   });
 }
 
 function ensureTrigger() {
-  // Check if trigger exists
-  var triggers = ScriptApp.getProjectTriggers();
-  var exists = false;
-  for (var i = 0; i < triggers.length; i++) {
-    if (triggers[i].getHandlerFunction() === 'processFollowUpQueue') {
-      exists = true;
-      break;
-    }
-  }
-  
-  if (!exists) {
-    // Run every hour
-    ScriptApp.newTrigger('processFollowUpQueue')
-      .timeBased()
-      .everyHours(1)
-      .create();
+  if (ScriptApp.getProjectTriggers().length === 0) {
+    ScriptApp.newTrigger('processFollowUpQueue').timeBased().everyHours(1).create();
   }
 }
