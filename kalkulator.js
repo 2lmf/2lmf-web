@@ -944,17 +944,35 @@ const emailBtn = document.getElementById('email-btn');
 
 if (pdfBtn) {
     pdfBtn.addEventListener('click', () => {
-        // 1. Create a temporary container for the PDF content
-        const pdfContainer = document.createElement('div');
-        pdfContainer.id = 'pdf-export-container';
-        pdfContainer.style.width = '794px'; // A4 width at 96dpi (approx)
-        pdfContainer.style.minHeight = '1123px';
-        pdfContainer.style.padding = '0';
-        pdfContainer.style.backgroundColor = 'white';
-        pdfContainer.style.boxSizing = 'border-box';
+        // 1. Create a Full Screen Overlay (Visible to User)
+        // This ensures the content is rendered and visible to html2canvas, solving the "blank page" issue.
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.zIndex = '20000';
+        overlay.style.backgroundColor = 'rgba(0,0,0,0.8)'; // Dark backdrop
+        overlay.style.display = 'flex';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'flex-start'; // Align top
+        overlay.style.overflowY = 'auto';
+        overlay.style.padding = '20px';
+        overlay.style.boxSizing = 'border-box';
 
-        // 2. Build the exact layout matching user's "good" screenshot
-        // Header
+        // 2. Create the A4 Page Container
+        const pdfPage = document.createElement('div');
+        pdfPage.id = 'pdf-export-page';
+        pdfPage.style.width = '794px'; // A4 width
+        pdfPage.style.minHeight = '1123px'; // A4 height
+        pdfPage.style.backgroundColor = 'white';
+        pdfPage.style.padding = '0';
+        pdfPage.style.boxSizing = 'border-box';
+        pdfPage.style.position = 'relative';
+        pdfPage.style.boxShadow = '0 0 20px rgba(0,0,0,0.5)'; // Nice shadow
+
+        // 3. Header Content
         const header = `
             <div style="background-color: #E67E22; color: white; padding: 40px 40px 20px 40px; font-family: 'Chakra Petch', sans-serif;">
                 <h1 style="margin: 0; font-size: 38px; font-weight: 700; text-transform: uppercase;">
@@ -968,7 +986,7 @@ if (pdfBtn) {
                 <h2 style="text-align: center; color: #E67E22; margin-bottom: 30px; font-family: 'Chakra Petch', sans-serif; text-transform: uppercase; font-size: 24px;">REZULTAT IZRAČUNA</h2>
                 <div id="pdf-table-wrapper" style="font-family: 'Segoe UI', sans-serif;"></div>
             </div>
-            <div style="margin-top: auto; text-align: center; padding-bottom: 20px;">
+            <div style="margin-top: 50px; text-align: center; padding-bottom: 20px;">
                 <h3 style="font-family: 'Chakra Petch', sans-serif; font-size: 20px; font-weight: 700;">© 2026 <span style="color:#E67E22;">2LMF PRO</span> KALKULATOR</h3>
                 <p style="margin: 5px 0 0 0; font-size: 12px; font-family: 'Segoe UI', sans-serif;">Svi izračuni su informativnog karaktera</p>
             </div>
@@ -977,13 +995,10 @@ if (pdfBtn) {
                 OIB: 29766043828 | IBAN: HR312340009111121324
             </div>
         `;
+        pdfPage.innerHTML = header;
 
-        pdfContainer.innerHTML = header;
-
-        // 3. Clone the results list
+        // 4. Inject Table
         const resultsContent = document.getElementById('results-container').cloneNode(true);
-
-        // Stylize TABLE for PDF (Clean up web styles)
         const items = resultsContent.querySelectorAll('.result-item');
         items.forEach(item => {
             item.style.borderBottom = '1px solid #eee';
@@ -991,17 +1006,17 @@ if (pdfBtn) {
             item.style.display = 'grid';
             item.style.gridTemplateColumns = '2fr 1fr 1fr 1fr';
             item.style.alignItems = 'center';
+            // Force colors
+            const spans = item.querySelectorAll('span');
+            spans.forEach(s => s.style.color = '#333');
         });
 
-        // Header Style
+        // Header Style Fix
         const resHeader = resultsContent.querySelector('.result-header-row');
         if (resHeader) {
             resHeader.style.backgroundColor = 'transparent';
             resHeader.style.borderBottom = '2px solid #ddd';
             resHeader.style.color = '#999';
-            resHeader.style.fontWeight = 'bold';
-            resHeader.style.textTransform = 'uppercase';
-            resHeader.style.fontSize = '12px';
         }
 
         // Total Row Style
@@ -1009,35 +1024,33 @@ if (pdfBtn) {
         if (totalRow) {
             totalRow.style.backgroundColor = '#E67E22';
             totalRow.style.color = 'black';
-            totalRow.style.padding = '20px';
-            totalRow.style.marginTop = '30px';
-            totalRow.style.borderRadius = '4px';
             totalRow.style.border = 'none';
         }
 
-        const tableWrapper = pdfContainer.querySelector('#pdf-table-wrapper');
-        tableWrapper.appendChild(resultsContent);
+        pdfPage.querySelector('#pdf-table-wrapper').appendChild(resultsContent);
 
-        // Append to visible area to ensure rendering (VISIBILITY FIX)
-        pdfContainer.style.position = 'fixed';
-        pdfContainer.style.left = '0';
-        pdfContainer.style.top = '0';
-        pdfContainer.style.zIndex = '10000'; // Top of everything
-        document.body.appendChild(pdfContainer);
+        overlay.appendChild(pdfPage);
+        document.body.appendChild(overlay);
 
-        // 4. Generate PDF
-        const opt = {
-            margin: 0,
-            filename: `izracun_${currentModule}_${new Date().toISOString().split('T')[0]}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: 800 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
+        // 5. Generate with Delay
+        // Give browser 500ms to paint the overlay
+        setTimeout(() => {
+            const opt = {
+                margin: 0,
+                filename: `izracun_${currentModule}_${new Date().toISOString().split('T')[0]}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: 800 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
 
-        html2pdf().set(opt).from(pdfContainer).save().then(() => {
-            // 5. Cleanup
-            document.body.removeChild(pdfContainer);
-        });
+            html2pdf().set(opt).from(pdfPage).save().then(() => {
+                document.body.removeChild(overlay);
+            }).catch(err => {
+                console.error(err);
+                alert("Greška pri kreiranju PDF-a.");
+                document.body.removeChild(overlay);
+            });
+        }, 500);
     });
 }
 
