@@ -753,19 +753,29 @@ function calculateFence(data) {
     const corners = parseInt(data.fenceCorners) || 0;
     const numPosts = numPanels + 1 + corners;
 
-    let postHeight = parseInt(height) + 2;
+    const h = parseInt(height); // Panel height
+    const availablePosts = [85, 105, 125, 155, 175, 205];
 
+    let requiredHeight = h; // Min height needed
     if (data.postType === 'concrete') {
-        const h = parseInt(height);
-        if (h <= 103) postHeight = 155;
-        else if (h <= 123) postHeight = 175;
-        else if (h <= 153) postHeight = 205;
-        else if (h <= 173) postHeight = 225;
-        else postHeight = 255;
+        requiredHeight += 50; // Needs +50cm for concrete
+    } else {
+        // For plate, usually just slightly larger than panel, or same? 
+        // User said: for 143 panel -> 155 post.
+        // so > h is a safe bet, or >= h if exact match exists.
+        // Let's use >= h.
     }
 
+    // Find smallest available post >= requiredHeight
+    let postHeight = availablePosts.find(p => p >= requiredHeight);
+
+    // Fallback if too big (take max)
+    if (!postHeight) postHeight = 205;
+
+    // Specific Override/Check if user had weird rules? 
+    // "Panel 143 -> Stup 145" was the bug. Now 143 -> 155. Correct.
+
     // Fix Post Price Lookup
-    // prices.fence.posts[postHeight]
     let postPrice = 0;
     if (prices.fence.posts && prices.fence.posts[postHeight]) {
         postPrice = prices.fence.posts[postHeight];
@@ -872,13 +882,13 @@ function displayResults(items) {
 
     // Grand Total Row
     const totalDiv = document.createElement('div');
-    totalDiv.className = 'result-item grand-total';
+    totalDiv.className = 'result-total-row'; // Use new consolidated style
     const fmtGrandTotal = grandTotal.toLocaleString('hr-HR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     // Conditional Styling for Fence Module
     if (currentModule === 'fence') {
         const fenceColor = document.getElementById('fence-color').value;
-        const colorCode = fenceColor === '6005' ? '#0B3D2E' : '#383E42'; // Green or Anthracite
+        const colorCode = fenceColor === '6005' ? '#0B3D2E' : '#383E42'; // Green or Anthracit
         totalDiv.style.backgroundColor = colorCode;
         totalDiv.style.color = 'white'; // White text on dark bg
 
@@ -918,7 +928,6 @@ function displayResults(items) {
     }
 
     resultsContainer.appendChild(totalDiv);
-
     resultsSection.scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -931,30 +940,32 @@ if (pdfBtn) {
         // 1. Create a temporary container for the PDF content
         const pdfContainer = document.createElement('div');
         pdfContainer.id = 'pdf-export-container';
-        pdfContainer.style.width = '800px'; // Fixed width for A4
+        pdfContainer.style.width = '794px'; // A4 width at 96dpi (approx)
+        pdfContainer.style.minHeight = '1123px';
         pdfContainer.style.padding = '0';
         pdfContainer.style.backgroundColor = 'white';
+        pdfContainer.style.boxSizing = 'border-box';
 
         // 2. Build the exact layout matching user's "good" screenshot
         // Header
         const header = `
-            <div style="background-color: #E67E22; color: white; padding: 40px; font-family: 'Chakra Petch', sans-serif;">
-                <h1 style="margin: 0; font-size: 32px; font-weight: 700; text-transform: uppercase;">
+            <div style="background-color: #E67E22; color: white; padding: 40px 40px 20px 40px; font-family: 'Chakra Petch', sans-serif;">
+                <h1 style="margin: 0; font-size: 38px; font-weight: 700; text-transform: uppercase;">
                     <span style="color: black;">2LMF PRO</span> KALKULATOR
                 </h1>
-                <p style="margin: 10px 0 0 0; font-size: 16px; color: black; font-weight: 500;">
+                <p style="margin: 10px 0 0 0; font-size: 18px; color: black; font-weight: 500;">
                     Informativni kalkulator za fasade, izolacije i ograde
                 </p>
             </div>
             <div style="padding: 40px;">
-                <h2 style="text-align: center; color: #E67E22; margin-bottom: 40px; font-family: 'Chakra Petch', sans-serif; text-transform: uppercase;">REZULTAT IZRAČUNA</h2>
-                <div id="pdf-table-wrapper"></div>
+                <h2 style="text-align: center; color: #E67E22; margin-bottom: 30px; font-family: 'Chakra Petch', sans-serif; text-transform: uppercase; font-size: 24px;">REZULTAT IZRAČUNA</h2>
+                <div id="pdf-table-wrapper" style="font-family: 'Segoe UI', sans-serif;"></div>
             </div>
-            <div style="margin-top: 40px; text-align: center; padding-bottom: 20px;">
-                <h3 style="font-family: 'Chakra Petch', sans-serif; font-size: 24px; font-weight: 700;">© 2026 <span style="color:#E67E22;">2LMF PRO</span> KALKULATOR</h3>
-                <p style="margin: 5px 0 0 0; font-size: 14px; font-family: 'Segoe UI', sans-serif;">Svi izračuni su informativnog karaktera</p>
+            <div style="margin-top: auto; text-align: center; padding-bottom: 20px;">
+                <h3 style="font-family: 'Chakra Petch', sans-serif; font-size: 20px; font-weight: 700;">© 2026 <span style="color:#E67E22;">2LMF PRO</span> KALKULATOR</h3>
+                <p style="margin: 5px 0 0 0; font-size: 12px; font-family: 'Segoe UI', sans-serif;">Svi izračuni su informativnog karaktera</p>
             </div>
-            <div style="background-color: #E67E22; color: black; padding: 20px; text-align: center; font-family: 'Segoe UI', sans-serif; font-weight: 700; font-size: 14px; margin-top: 20px;">
+            <div style="background-color: #E67E22; color: black; padding: 15px; text-align: center; font-family: 'Segoe UI', sans-serif; font-weight: 700; font-size: 13px; margin-top: 10px;">
                 Email: 2lmf.info@gmail.com | Mob: +385 95 311 5007<br>
                 OIB: 29766043828 | IBAN: HR312340009111121324
             </div>
@@ -963,30 +974,56 @@ if (pdfBtn) {
         pdfContainer.innerHTML = header;
 
         // 3. Clone the results list
-        // We need to capture the current state of results-container
         const resultsContent = document.getElementById('results-container').cloneNode(true);
 
-        // Apply styling to the cloned table for PDF cleanliness
-        // We can strip styles or ensure they carry over. 
-        // Best to let them inherit or force simple list styling.
-        // Let's modify the standard 'result-item' style in CSS or just trust the clone with inline fixes?
-        // Actually, html2pdf does a good job if the container width is set.
+        // Stylize TABLE for PDF (Clean up web styles)
+        const items = resultsContent.querySelectorAll('.result-item');
+        items.forEach(item => {
+            item.style.borderBottom = '1px solid #eee';
+            item.style.padding = '15px 0';
+            item.style.display = 'grid';
+            item.style.gridTemplateColumns = '2fr 1fr 1fr 1fr';
+            item.style.alignItems = 'center';
+        });
+
+        // Header Style
+        const resHeader = resultsContent.querySelector('.result-header-row');
+        if (resHeader) {
+            resHeader.style.backgroundColor = 'transparent';
+            resHeader.style.borderBottom = '2px solid #ddd';
+            resHeader.style.color = '#999';
+            resHeader.style.fontWeight = 'bold';
+            resHeader.style.textTransform = 'uppercase';
+            resHeader.style.fontSize = '12px';
+        }
+
+        // Total Row Style
+        const totalRow = resultsContent.querySelector('.result-total-row');
+        if (totalRow) {
+            totalRow.style.backgroundColor = '#E67E22';
+            totalRow.style.color = 'black';
+            totalRow.style.padding = '20px';
+            totalRow.style.marginTop = '30px';
+            totalRow.style.borderRadius = '4px';
+            totalRow.style.border = 'none';
+        }
 
         const tableWrapper = pdfContainer.querySelector('#pdf-table-wrapper');
         tableWrapper.appendChild(resultsContent);
 
-        // Append to body (off-screen) to render
-        pdfContainer.style.position = 'absolute';
-        pdfContainer.style.left = '-9999px';
+        // Append to visible area to ensure rendering (VISIBILITY FIX)
+        pdfContainer.style.position = 'fixed';
+        pdfContainer.style.left = '0';
         pdfContainer.style.top = '0';
+        pdfContainer.style.zIndex = '10000'; // Top of everything
         document.body.appendChild(pdfContainer);
 
         // 4. Generate PDF
         const opt = {
-            margin: 0, // No margin because we have built-in padding in our container
+            margin: 0,
             filename: `izracun_${currentModule}_${new Date().toISOString().split('T')[0]}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, scrollY: 0, backgroundColor: '#ffffff' },
+            html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: 800 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
