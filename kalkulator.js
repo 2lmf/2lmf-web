@@ -725,7 +725,22 @@ function calculateFence(data) {
 
     // 1. Paneli (Dužina / 2.5m)
     const numPanels = Math.ceil(length / 2.5);
-    const panelPrice = prices.fence[panelPriceKey] || 0;
+
+    let panelPrice = 0;
+    if (type === '2d') {
+        const heightKey = parseInt(height); // e.g. 103
+        if (prices.fence.panel_2d && prices.fence.panel_2d[heightKey]) {
+            panelPrice = prices.fence.panel_2d[heightKey];
+        }
+    } else {
+        const thickness = data.panelThickness || '4';
+        const heightKey = parseInt(height);
+        if (thickness === '5') {
+            if (prices.fence.panel_3d_5 && prices.fence.panel_3d_5[heightKey]) panelPrice = prices.fence.panel_3d_5[heightKey];
+        } else {
+            if (prices.fence.panel_3d_4 && prices.fence.panel_3d_4[heightKey]) panelPrice = prices.fence.panel_3d_4[heightKey];
+        }
+    }
 
     items.push({
         name: panelName,
@@ -734,9 +749,7 @@ function calculateFence(data) {
         price: panelPrice
     });
 
-    // 2. Stupovi (Broj panela + 1 za početak/kraj)
-    // Za savršeni niz n panela treba n+1 stupova.
-    // Svaki kut dodaje još 1 stup (prekid niza).
+    // 2. Stupovi
     const corners = parseInt(data.fenceCorners) || 0;
     const numPosts = numPanels + 1 + corners;
 
@@ -744,16 +757,19 @@ function calculateFence(data) {
 
     if (data.postType === 'concrete') {
         const h = parseInt(height);
-        // Standard lengths: 155, 175, 205, 225, 255
         if (h <= 103) postHeight = 155;
         else if (h <= 123) postHeight = 175;
-        else if (h <= 153) postHeight = 205; // Covers 143(2D) and 153(3D)
-        else if (h <= 173) postHeight = 225; // Covers 163(2D) and 173(3D)
-        else postHeight = 255; // Covers 183(2D) and 203
+        else if (h <= 153) postHeight = 205;
+        else if (h <= 173) postHeight = 225;
+        else postHeight = 255;
     }
 
-    const postPriceKey = `post_${postHeight}`;
-    const postPrice = prices.fence[postPriceKey] || 0;
+    // Fix Post Price Lookup
+    // prices.fence.posts[postHeight]
+    let postPrice = 0;
+    if (prices.fence.posts && prices.fence.posts[postHeight]) {
+        postPrice = prices.fence.posts[postHeight];
+    }
 
     const postTypeLabel = data.postType === 'plate' ? 's pločicom' : 'za betoniranje';
 
@@ -912,20 +928,31 @@ const emailBtn = document.getElementById('email-btn');
 
 if (pdfBtn) {
     pdfBtn.addEventListener('click', () => {
-        const element = document.getElementById('results-section');
+        // Elements to hide
+        const nav = document.querySelector('.module-nav');
+        const btns = document.querySelector('.buttons-row');
+        const formSections = document.querySelectorAll('.module-header, #calc-form'); // Hide form, keep results
+
+        if (nav) nav.style.display = 'none';
+        if (btns) btns.style.display = 'none';
+        formSections.forEach(el => el.style.display = 'none');
+
+        // Select Main Wrapper
+        const element = document.querySelector('body');
+
         const opt = {
-            margin: 10,
+            margin: [10, 0, 10, 0], // Top, Right, Bottom, Left
             filename: `izracun_${currentModule}_${new Date().toISOString().split('T')[0]}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 1, useCORS: true, scrollY: 0, backgroundColor: '#ffffff' },
+            html2canvas: { scale: 2, useCORS: true, scrollY: 0, backgroundColor: '#ffffff' }, // Scale 2 for better text, optimized config
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-        // Temporarily hide buttons for clean PDF
-        const btns = document.querySelector('.buttons-row');
-        btns.style.display = 'none';
 
         html2pdf().set(opt).from(element).save().then(() => {
-            btns.style.display = 'flex'; // Restore buttons
+            // Restore visibility
+            if (nav) nav.style.display = 'flex';
+            if (btns) btns.style.display = 'flex';
+            formSections.forEach(el => el.style.display = 'block'); // Might need 'flex' or check original display. Block is safe for divs.
         });
     });
 }
