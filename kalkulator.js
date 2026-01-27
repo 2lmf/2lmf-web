@@ -754,34 +754,41 @@ function calculateFence(data) {
     const numPosts = numPanels + 1 + corners;
 
     const h = parseInt(height); // Panel height
-    const availablePosts = [85, 105, 125, 155, 175, 205];
 
-    let requiredHeight = h; // Min height needed
-    if (data.postType === 'concrete') {
-        requiredHeight += 50; // Needs +50cm for concrete
+    // Choose available sizes based on type
+    const isConcrete = data.postType === 'concrete';
+    const availablePosts = isConcrete
+        ? [155, 175, 205, 225, 255]
+        : [85, 105, 125, 155, 175, 205];
+
+    let targetSize = h;
+    if (isConcrete) {
+        targetSize += 50; // Needs +50cm for concrete
     } else {
-        // For plate, usually just slightly larger than panel, or same? 
-        // User said: for 143 panel -> 155 post.
-        // so > h is a safe bet, or >= h if exact match exists.
-        // Let's use >= h.
+        // Plate: usually match panel height or slightly more.
+        // Logic: find first available >= panel height.
+        // e.g. Panel 103 -> Post 105. Panel 143 -> Post 155.
     }
 
-    // Find smallest available post >= requiredHeight
-    let postHeight = availablePosts.find(p => p >= requiredHeight);
+    // Find smallest available post >= targetSize
+    let postHeight = availablePosts.find(p => p >= targetSize);
 
-    // Fallback if too big (take max)
-    if (!postHeight) postHeight = 205;
+    // Fallback?
+    if (!postHeight) postHeight = availablePosts[availablePosts.length - 1]; // Max size if nothing fits
 
-    // Specific Override/Check if user had weird rules? 
-    // "Panel 143 -> Stup 145" was the bug. Now 143 -> 155. Correct.
-
-    // Fix Post Price Lookup
+    // Price Lookup
     let postPrice = 0;
-    if (prices.fence.posts && prices.fence.posts[postHeight]) {
-        postPrice = prices.fence.posts[postHeight];
+    if (isConcrete) {
+        if (prices.fence.posts_concrete && prices.fence.posts_concrete[postHeight]) {
+            postPrice = prices.fence.posts_concrete[postHeight];
+        }
+    } else {
+        if (prices.fence.posts && prices.fence.posts[postHeight]) {
+            postPrice = prices.fence.posts[postHeight];
+        }
     }
 
-    const postTypeLabel = data.postType === 'plate' ? 's pločicom' : 'za betoniranje';
+    const postTypeLabel = isConcrete ? 'za betoniranje' : 's pločicom';
 
     items.push({
         name: `Stup ${postHeight}cm (${postTypeLabel}) - ${color}`,
