@@ -914,23 +914,18 @@ if (pdfBtn) {
     pdfBtn.addEventListener('click', () => {
         const element = document.getElementById('results-section');
         const opt = {
-            margin: [10, 10, 10, 10], // Top, Left, Bottom, Right
+            margin: 10,
             filename: `izracun_${currentModule}_${new Date().toISOString().split('T')[0]}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },
+            html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-
-        // Hide buttons container (using correct class from HTML)
-        const btns = document.querySelector('.results-actions-container');
-        if (btns) btns.style.display = 'none';
+        // Temporarily hide buttons for clean PDF
+        const btns = document.querySelector('.buttons-row');
+        btns.style.display = 'none';
 
         html2pdf().set(opt).from(element).save().then(() => {
-            if (btns) btns.style.display = 'block'; // Restore buttons (using block or flex as needed, usually block for div)
-        }).catch(err => {
-            console.error("PDF Error:", err);
-            if (btns) btns.style.display = 'block';
-            alert("Greška pri kreiranju PDF-a. Pokušajte ponovno.");
+            btns.style.display = 'flex'; // Restore buttons
         });
     });
 }
