@@ -981,7 +981,7 @@ if (emailBtnSend) {
         emailBtnSend.disabled = true;
 
         // Send to GAS
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbz1nLDF9-E_F7ZfPfwrNyD0YZ6GMI6eB-Si7Vier-YbWWe_Idn5LpTKOpcARmNGD17o/exec";
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbw1J5mybG2mQp1UNTyWDMe683Tk4jbjs8RYWvHPmV4rG2Q3EQPS5NziBPDmAcTLlQ4w/exec";
 
         fetch(GAS_URL, {
             method: 'POST',
