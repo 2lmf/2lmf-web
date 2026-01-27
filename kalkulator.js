@@ -917,7 +917,7 @@ if (pdfBtn) {
             margin: 10,
             filename: `izracun_${currentModule}_${new Date().toISOString().split('T')[0]}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
+            html2canvas: { scale: 1, useCORS: true, scrollY: 0, backgroundColor: '#ffffff' },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
         // Temporarily hide buttons for clean PDF
