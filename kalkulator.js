@@ -928,31 +928,71 @@ const emailBtn = document.getElementById('email-btn');
 
 if (pdfBtn) {
     pdfBtn.addEventListener('click', () => {
-        // Elements to hide
-        const nav = document.querySelector('.module-nav');
-        const btns = document.querySelector('.buttons-row');
-        const formSections = document.querySelectorAll('.module-header, #calc-form'); // Hide form, keep results
+        // 1. Create a temporary container for the PDF content
+        const pdfContainer = document.createElement('div');
+        pdfContainer.id = 'pdf-export-container';
+        pdfContainer.style.width = '800px'; // Fixed width for A4
+        pdfContainer.style.padding = '0';
+        pdfContainer.style.backgroundColor = 'white';
 
-        if (nav) nav.style.display = 'none';
-        if (btns) btns.style.display = 'none';
-        formSections.forEach(el => el.style.display = 'none');
+        // 2. Build the exact layout matching user's "good" screenshot
+        // Header
+        const header = `
+            <div style="background-color: #E67E22; color: white; padding: 40px; font-family: 'Chakra Petch', sans-serif;">
+                <h1 style="margin: 0; font-size: 32px; font-weight: 700; text-transform: uppercase;">
+                    <span style="color: black;">2LMF PRO</span> KALKULATOR
+                </h1>
+                <p style="margin: 10px 0 0 0; font-size: 16px; color: black; font-weight: 500;">
+                    Informativni kalkulator za fasade, izolacije i ograde
+                </p>
+            </div>
+            <div style="padding: 40px;">
+                <h2 style="text-align: center; color: #E67E22; margin-bottom: 40px; font-family: 'Chakra Petch', sans-serif; text-transform: uppercase;">REZULTAT IZRAČUNA</h2>
+                <div id="pdf-table-wrapper"></div>
+            </div>
+            <div style="margin-top: 40px; text-align: center; padding-bottom: 20px;">
+                <h3 style="font-family: 'Chakra Petch', sans-serif; font-size: 24px; font-weight: 700;">© 2026 <span style="color:#E67E22;">2LMF PRO</span> KALKULATOR</h3>
+                <p style="margin: 5px 0 0 0; font-size: 14px; font-family: 'Segoe UI', sans-serif;">Svi izračuni su informativnog karaktera</p>
+            </div>
+            <div style="background-color: #E67E22; color: black; padding: 20px; text-align: center; font-family: 'Segoe UI', sans-serif; font-weight: 700; font-size: 14px; margin-top: 20px;">
+                Email: 2lmf.info@gmail.com | Mob: +385 95 311 5007<br>
+                OIB: 29766043828 | IBAN: HR312340009111121324
+            </div>
+        `;
 
-        // Select Main Wrapper
-        const element = document.querySelector('body');
+        pdfContainer.innerHTML = header;
 
+        // 3. Clone the results list
+        // We need to capture the current state of results-container
+        const resultsContent = document.getElementById('results-container').cloneNode(true);
+
+        // Apply styling to the cloned table for PDF cleanliness
+        // We can strip styles or ensure they carry over. 
+        // Best to let them inherit or force simple list styling.
+        // Let's modify the standard 'result-item' style in CSS or just trust the clone with inline fixes?
+        // Actually, html2pdf does a good job if the container width is set.
+
+        const tableWrapper = pdfContainer.querySelector('#pdf-table-wrapper');
+        tableWrapper.appendChild(resultsContent);
+
+        // Append to body (off-screen) to render
+        pdfContainer.style.position = 'absolute';
+        pdfContainer.style.left = '-9999px';
+        pdfContainer.style.top = '0';
+        document.body.appendChild(pdfContainer);
+
+        // 4. Generate PDF
         const opt = {
-            margin: [10, 0, 10, 0], // Top, Right, Bottom, Left
+            margin: 0, // No margin because we have built-in padding in our container
             filename: `izracun_${currentModule}_${new Date().toISOString().split('T')[0]}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, scrollY: 0, backgroundColor: '#ffffff' }, // Scale 2 for better text, optimized config
+            html2canvas: { scale: 2, useCORS: true, scrollY: 0, backgroundColor: '#ffffff' },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        html2pdf().set(opt).from(element).save().then(() => {
-            // Restore visibility
-            if (nav) nav.style.display = 'flex';
-            if (btns) btns.style.display = 'flex';
-            formSections.forEach(el => el.style.display = 'block'); // Might need 'flex' or check original display. Block is safe for divs.
+        html2pdf().set(opt).from(pdfContainer).save().then(() => {
+            // 5. Cleanup
+            document.body.removeChild(pdfContainer);
         });
     });
 }
